@@ -110,9 +110,9 @@ public class DriveSubsystem extends SubsystemBase {
                 // This is the ID of the drive motor
                 kFrontLeftDrive,
                 // This is the ID of the steer motor
-                FRONT_LEFT_MODULE_STEER_MOTOR,
+                kFrontLeftSteer,
                 // This is the ID of the steer encoder
-                FRONT_LEFT_MODULE_STEER_ENCODER,
+                kf,
                 // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
                 FRONT_LEFT_MODULE_STEER_OFFSET
         );
@@ -123,10 +123,10 @@ public class DriveSubsystem extends SubsystemBase {
                         .withSize(2, 4)
                         .withPosition(2, 0),
                 Mk3SwerveModuleHelper.GearRatio.STANDARD,
-                FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-                FRONT_RIGHT_MODULE_STEER_MOTOR,
-                FRONT_RIGHT_MODULE_STEER_ENCODER,
-                FRONT_RIGHT_MODULE_STEER_OFFSET
+                kFrontRightDrive,
+                kFrontRightSteer,
+                kFrontRightSteerEncoder,
+                kFrontRightSteerOffset
         );
 
         m_backLeftModule = Mk3SwerveModuleHelper.createFalcon500(
