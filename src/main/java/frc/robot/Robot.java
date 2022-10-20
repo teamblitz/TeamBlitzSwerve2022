@@ -14,12 +14,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
+  public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommands;
   private RobotContainer m_robotContainer;
   private StatusManager statusManager;
 
   @Override
   public void robotInit() {
+    ctreConfigs = new CTREConfigs();
     m_robotContainer = new RobotContainer();
 
     System.out.println("Robot Start up at: " + Timer.getFPGATimestamp());
