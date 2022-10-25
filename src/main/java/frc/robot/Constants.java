@@ -8,6 +8,9 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -70,6 +73,14 @@ public final class Constants {
         public static final double drivePeakCurrentDuration = 0.1;
         public static final boolean driveEnableCurrentLimit = true;
 
+        /* Current Limits
+        Smart current limit is */
+        public static final int driveSmartCurrentLimit = 40; // TODO: Make sure these are acceptable values.
+        public static final int driveSecondaryCurrentLimit = 65;
+
+        public static final int angleSmartCurrentLimit = 25;
+        public static final int angleSecondaryCurrentLimit = 40;
+
         /* These values are used by the drive falcon to ramp in open loop and closed loop driving.
          * We found a small open loop ramp (0.25) helps with tread wear, tipping, etc */
         public static final double openLoopRamp = 0.25;
@@ -104,8 +115,8 @@ public final class Constants {
         public static final double maxAngularVelocity = 10.0; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
-        public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
-        public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
+        public static final IdleMode angleNeutralMode = IdleMode.kCoast;
+        public static final IdleMode driveNeutralMode = IdleMode.kBrake;
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */

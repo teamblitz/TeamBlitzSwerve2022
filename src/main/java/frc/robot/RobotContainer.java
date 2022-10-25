@@ -22,8 +22,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.tests.DriveTest;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Swerve;
 import frc.robot.utils.ButtonBinder;
 import frc.robot.utils.ButtonBox;
 import frc.robot.utils.SaitekX52Joystick;
@@ -38,7 +37,7 @@ public class RobotContainer {
 
   /* ***** --- Subsystems --- ***** */
 
-  private DriveSubsystem m_drive;
+  private Swerve m_drive;
 
 
   /* ***** --- Controllers --- ***** */
@@ -88,7 +87,7 @@ public class RobotContainer {
 
 
   private void configureSubsystems() {
-    m_drive = new DriveSubsystem();
+    m_drive = new Swerve();
   }
 
 
