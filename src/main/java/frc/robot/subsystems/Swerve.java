@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.SwerveModule;
 import frc.robot.Constants;
@@ -18,16 +19,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    public Pigeon2 gyro;
+    public AHRS gyro;
 
     public Swerve() {
-        gyro = new Pigeon2(Constants.Swerve.pigeonID);
-        gyro.configFactoryDefault();
+        gyro = new AHRS();
         zeroGyro();
         
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw());
 
-        mSwerveMods = new SwerveModule[] { // Unknown witch module is witch. Might be front right, front left, back right, back left.
+        mSwerveMods = new SwerveModule[] { // front left, front rigt, back left, back right.
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
             new SwerveModule(1, Constants.Swerve.Mod1.constants),
             new SwerveModule(2, Constants.Swerve.Mod2.constants),
@@ -82,7 +82,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void zeroGyro(){
-        gyro.setYaw(0);
+        gyro.reset();
     }
 
     public Rotation2d getYaw() {
