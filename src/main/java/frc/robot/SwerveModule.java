@@ -19,6 +19,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 public class SwerveModule {
     public int moduleNumber;
@@ -65,7 +66,8 @@ public class SwerveModule {
             // TODO This needs to be in rev format.
         }
         else {
-            mDriveMotor.getPIDController().setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity);
+            mDriveMotor.getPIDController().setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity, 0, feedforward.calculate(desiredState.speedMetersPerSecond));
+            // mDriveMotor.set(ControlMode.Velocity, desiredState.speedMetersPerSecond, DemandType.ArbitraryFeedForward, feedforward.calculate(desiredState.speedMetersPerSecond));
         }
     }
 
@@ -106,6 +108,7 @@ public class SwerveModule {
         mAngleMotor.setSecondaryCurrentLimit(Constants.Swerve.angleSecondaryCurrentLimit);
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         mAngleMotor.setIdleMode(Constants.Swerve.angleNeutralMode);
+        
         mAngleMotor.getEncoder().setPositionConversionFactor(Constants.Swerve.chosenModule.angleGearRatio/360);
         resetToAbsolute();
 
@@ -121,6 +124,8 @@ public class SwerveModule {
         mDriveMotor.setSecondaryCurrentLimit(Constants.Swerve.driveSecondaryCurrentLimit);
         mDriveMotor.setInverted(Constants.Swerve.driveMotorInvert);
         mDriveMotor.setIdleMode(Constants.Swerve.driveNeutralMode);
+        mDriveMotor.setOpenLoopRampRate(Constants.Swerve.openLoopRamp);
+        mDriveMotor.setClosedLoopRampRate(Constants.Swerve.closedLoopRamp);
 
         mDriveMotor.getEncoder().setVelocityConversionFactor(Constants.Swerve.chosenModule.driveGearRatio * Constants.Swerve.chosenModule.wheelCircumference / 60);
         mDriveMotor.getEncoder().setPosition(0);
@@ -128,7 +133,7 @@ public class SwerveModule {
         mDriveMotor.getPIDController().setP(Constants.Swerve.driveKP);
         mDriveMotor.getPIDController().setI(Constants.Swerve.driveKI);
         mDriveMotor.getPIDController().setD(Constants.Swerve.driveKD);
-        mDriveMotor.getPIDController().setFF(Constants.Swerve.driveKF);
+        mDriveMotor.getPIDController().setFF(Constants.Swerve.driveKF); // Not actually used because we specify our feedforward when we set our speed.
     }
 
     public SwerveModuleState getState(){
