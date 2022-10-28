@@ -8,24 +8,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import frc.robot.Constants.OIConstants;
+import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Swerve;
-import frc.robot.utils.ButtonBinder;
-import frc.robot.utils.ButtonBox;
-import frc.robot.utils.SaitekX52Joystick;
 
 /**
 * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -39,6 +26,8 @@ public class RobotContainer {
 
   private Swerve m_drive;
 
+  private XboxController m_driveController;
+
 
   /* ***** --- Controllers --- ***** */
 
@@ -51,43 +40,25 @@ public class RobotContainer {
     
     configureButtonBindings();
   
+    setDefaultCommands();
   }
 
-  // private void setDefaultCommands() {
-  //   // Set defalut command for drive
+  private void setDefaultCommands() {
+    // Set defalut command for drive
+    m_drive.setDefaultCommand(new TeleopSwerve(
+            m_drive,
+            () -> m_driveController.getLeftY(),
+            () -> m_driveController.getLeftX(),
+            () -> m_driveController.getRightX(),
+            () -> true
+            ));
 
-  //   if (OIConstants.useXboxController) {
-  //     m_drive.setDefaultCommand(
-  //       new RunCommand(() -> m_drive
-  //       // To remove slew rate limiter remove the filter.calculate(), and filterRotation.calculate()
-  //       .performDrive(
-  //         filter.calculate(
-  //           -m_xboxController.getLeftY() * (m_xboxController.getRawAxis(OIConstants.XboxMappings.kOverdrive.value) < 0.5 ? kDriveLowSpeed : kDriveFullSpeed)), 
-  //         filterRotation.calculate(
-  //           m_xboxController.getRightX() * (m_xboxController.getRawAxis(OIConstants.XboxMappings.kOverdrive.value) < 0.5 ? kTurnLowSpeed : kTurnFullSpeed)),
-  //         m_xboxController.getRawButton(OIConstants.XboxMappings.kSemiAutoBallSeek.value), //Turns on semiautonomous ball acquire
-  //         m_xboxController.getRawAxis(OIConstants.XboxMappings.kSemiAutoBallTarget.value) > 0.5), //Turns on semiautonomous targeter on Left Trigger
-  //         m_drive).withName("DriveDefalutCommand"));
-  //   } else if (OIConstants.useSaitekController) {
-      
-  //     m_drive.setDefaultCommand(
-  //       new RunCommand(() -> m_drive
-  //       // To remove slew rate limiter remove the filter.calculate(), and filterRotation.calculate()
-  //       .performDrive(
-  //         filter.calculate(
-  //           // -m_saitekController.getY() * (((-m_saitekController.getRawAxis(SaitekX52Joystick.Axis.kThrotle.value)+1)/2) * kDriveMultiplyer + kDriveMinSpeed)
-  //           -m_saitekController.getY() * (m_saitekController.getRawButton(SaitekX52Joystick.Button.kModeBlue.value) ? 1.0 : m_saitekController.getRawButton(SaitekX52Joystick.Button.kModeRed.value) ? .5 : .75)
-  //           ),
-  //         filterRotation.calculate(
-  //           kTurnLowSpeed * m_saitekController.getRawAxis(SaitekX52Joystick.Axis.kZRot.value)),
-  //         m_saitekController.getRawButton(OIConstants.SaitekMappings.kSemiAutoBallSeek.value) || m_buttonBoard.getRawButton(OIConstants.ButtonBoxMappings.kSemiAutoBallSeek), //Turns on semiautonomous ball acquire
-  //         m_saitekController.getRawButton(OIConstants.SaitekMappings.kSemiAutoBallTarget.value) || m_buttonBoard.getRawButton(OIConstants.ButtonBoxMappings.kSemiAutoBallTarget)), //Turns on semiautonomous targeter on Left Trigger
-  //         m_drive).withName("DriveDefalutCommand"));    }
-  // }
+  }
 
 
   private void configureSubsystems() {
     m_drive = new Swerve();
+    m_driveController = new XboxController(0);
   }
 
 

@@ -1,6 +1,7 @@
+/* Big thanks to Team 364 for the base code. */
+
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.sensors.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.SwerveModule;
@@ -13,6 +14,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,6 +23,8 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public AHRS gyro;
+
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Swerve");
 
     public Swerve() {
         gyro = new AHRS();
@@ -33,6 +38,7 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(2, Constants.Swerve.Mod2.constants),
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
+        initTelementry();
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -91,12 +97,20 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic(){
-        swerveOdometry.update(getYaw(), getStates());  
+        swerveOdometry.update(getYaw(), getStates());
+    }
 
+    @Override
+    public void simulationPeriodic() {
+        
+    }
+
+    public void initTelementry(){
         for(SwerveModule mod : mSwerveMods){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+            shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Cancoder", () -> mod.getCanCoder().getDegrees());
+            shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Integrated", () -> mod.getState().angle.getDegrees());
+            shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Rotation", () -> mod.getState().angle.getDegrees());
+            shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Velocity", () -> mod.getState().speedMetersPerSecond); 
         }
     }
 }

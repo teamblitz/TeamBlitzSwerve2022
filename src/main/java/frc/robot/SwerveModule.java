@@ -1,4 +1,4 @@
-/* Big thanks to  */
+/* Big thanks to Team 364 for the base code. */
 
 package frc.robot;
 
@@ -6,31 +6,28 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-import frc.lib.math.Conversions;
-import frc.lib.util.CTREModuleState;
+import frc.lib.util.ModuleStateOptimizer;
 import frc.lib.util.SwerveModuleConstants;
 
-import javax.swing.text.Position;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 public class SwerveModule {
     public int moduleNumber;
     private Rotation2d angleOffset;
-    private Rotation2d lastAngle;
+    private Rotation2d lastAngle = Rotation2d.fromDegrees(0);
 
     private CANSparkMax mAngleMotor;
     private CANSparkMax mDriveMotor;
     private CANCoder angleEncoder;
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
+
+    /* Sim Caches (basically im lazy and don't want to use the rev physics sim) */
+    private double simSpeedCache;
+    private Rotation2d simAngleCache = Rotation2d.fromDegrees(0);
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
@@ -52,10 +49,12 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
-        desiredState = CTREModuleState.optimize(desiredState, getState().angle); //Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
+        desiredState = ModuleStateOptimizer.optimize(desiredState, getState().angle); //Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
 
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
+        simSpeedCache = desiredState.speedMetersPerSecond;
+        simAngleCache = desiredState.angle;
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
@@ -78,7 +77,8 @@ public class SwerveModule {
     }
 
     private Rotation2d getAngle(){
-        return Rotation2d.fromDegrees(mAngleMotor.getEncoder().getPosition());
+        if (Robot.isReal()) return Rotation2d.fromDegrees(mAngleMotor.getEncoder().getPosition());
+        return simAngleCache; // If sim.
         // return Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor_ctre.getSelectedSensorPosition(), Constants.Swerve.angleGearRatio));
     }
 
@@ -141,7 +141,7 @@ public class SwerveModule {
     public SwerveModuleState getState(){
         return new SwerveModuleState(
             // Conversions.falconToMPS(mDriveMotor_ctre.getSelectedSensorVelocity(), Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio),
-            mDriveMotor.getEncoder().getVelocity(), 
+            Robot.isReal() ? mDriveMotor.getEncoder().getVelocity() : simSpeedCache, 
             getAngle()
         ); 
     }
