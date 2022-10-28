@@ -63,7 +63,6 @@ public class SwerveModule {
             double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
             // mDriveMotor_ctre.set(ControlMode.PercentOutput, percentOutput);
             mDriveMotor.set(percentOutput);
-            // TODO This needs to be in rev format.
         }
         else {
             mDriveMotor.getPIDController().setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity, 0, feedforward.calculate(desiredState.speedMetersPerSecond));
@@ -109,7 +108,8 @@ public class SwerveModule {
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         mAngleMotor.setIdleMode(Constants.Swerve.angleNeutralMode);
         
-        mAngleMotor.getEncoder().setPositionConversionFactor(Constants.Swerve.chosenModule.angleGearRatio/360);
+        mAngleMotor.getEncoder().setPositionConversionFactor((1/Constants.Swerve.chosenModule.angleGearRatio) // We do 1 over the gear ratio because 1 rotation of the motor is < 1 rotation of the module        
+                * 360); // 1/360 rotations is 1 degree, 1 rotation is 360 degrees.
         resetToAbsolute();
 
         mAngleMotor.getPIDController().setP(Constants.Swerve.angleKP);
@@ -127,7 +127,9 @@ public class SwerveModule {
         mDriveMotor.setOpenLoopRampRate(Constants.Swerve.openLoopRamp);
         mDriveMotor.setClosedLoopRampRate(Constants.Swerve.closedLoopRamp);
 
-        mDriveMotor.getEncoder().setVelocityConversionFactor(Constants.Swerve.chosenModule.driveGearRatio * Constants.Swerve.chosenModule.wheelCircumference / 60);
+        mDriveMotor.getEncoder().setVelocityConversionFactor(1/Constants.Swerve.chosenModule.driveGearRatio // 1/gear ratio because the wheel spins slower than the motor.
+                * Constants.Swerve.chosenModule.wheelCircumference // Multiply by the circumference to get meters per miniute
+                / 60); // Devide by 60 to get meters per second.
         mDriveMotor.getEncoder().setPosition(0);
 
         mDriveMotor.getPIDController().setP(Constants.Swerve.driveKP);

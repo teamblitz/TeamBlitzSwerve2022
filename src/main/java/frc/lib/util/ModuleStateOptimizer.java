@@ -17,9 +17,10 @@ public class CTREModuleState {
     double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
     double targetSpeed = desiredState.speedMetersPerSecond;
     double delta = targetAngle - currentAngle.getDegrees();
+    // If we rotate more than 90 degrees, we need to reverse the speed
     if (Math.abs(delta) > 90){
         targetSpeed = -targetSpeed;
-        targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
+        targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180); // I asume this does the same thing the the other method does but I have no clue until I test it.
     }        
     return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
   }
@@ -33,22 +34,23 @@ public class CTREModuleState {
       double lowerBound;
       double upperBound;
       double lowerOffset = scopeReference % 360;
-      if (lowerOffset >= 0) {
+      if (lowerOffset >= 0) { // If we are in the positive
           lowerBound = scopeReference - lowerOffset;
           upperBound = scopeReference + (360 - lowerOffset);
-      } else {
+      } else { // If we are in the negitave
           upperBound = scopeReference - lowerOffset;
           lowerBound = scopeReference - (360 + lowerOffset);
       }
-      while (newAngle < lowerBound) {
+      while (newAngle < lowerBound) { // Isn't there a better way?
           newAngle += 360;
       }
       while (newAngle > upperBound) {
           newAngle -= 360;
       }
-      if (newAngle - scopeReference > 180) {
-          newAngle -= 360;
-      } else if (newAngle - scopeReference < -180) {
+      // If we have to turn more than 180 degrees rotate the other way to avoid unnecessary rotation.
+      if (newAngle - scopeReference > 180) { // If were we are vs were we are going to turn to is over 180 degrees
+          newAngle -= 360; // Decrease it by 360 to rotate the other way around
+      } else if (newAngle - scopeReference < -180) { // Same as above for when we are in the negitave
           newAngle += 360;
       }
       return newAngle;
