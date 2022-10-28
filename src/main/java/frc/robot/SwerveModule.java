@@ -116,6 +116,8 @@ public class SwerveModule {
         mAngleMotor.getPIDController().setI(Constants.Swerve.angleKI);
         mAngleMotor.getPIDController().setD(Constants.Swerve.angleKD);
         mAngleMotor.getPIDController().setFF(Constants.Swerve.angleKF);
+
+        mAngleMotor.getPIDController().setOutputRange(-.25, .25);
     }
 
     private void configDriveMotor(){       
@@ -136,6 +138,9 @@ public class SwerveModule {
         mDriveMotor.getPIDController().setI(Constants.Swerve.driveKI);
         mDriveMotor.getPIDController().setD(Constants.Swerve.driveKD);
         mDriveMotor.getPIDController().setFF(Constants.Swerve.driveKF); // Not actually used because we specify our feedforward when we set our speed.
+
+        mDriveMotor.getPIDController().setOutputRange(-.5, .5);
+
     }
 
     public SwerveModuleState getState(){

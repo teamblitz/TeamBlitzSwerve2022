@@ -9,8 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.SwerveSimTest;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Swerve;
 
@@ -52,6 +54,7 @@ public class RobotContainer {
             () -> m_driveController.getRightX(),
             () -> true
             ));
+    // m_drive.setDefaultCommand(new SwerveSimTest(m_drive));
 
   }
 
