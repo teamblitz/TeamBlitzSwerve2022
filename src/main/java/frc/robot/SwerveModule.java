@@ -6,11 +6,19 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismObject2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import frc.lib.util.ModuleStateOptimizer;
 import frc.lib.util.SwerveModuleConstants;
 
+import javax.naming.ldap.ManageReferralControl;
+
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -21,7 +29,13 @@ public class SwerveModule {
 
     private CANSparkMax mAngleMotor;
     private CANSparkMax mDriveMotor;
-    private CANCoder angleEncoder;
+    private CANCoder absoluteEncoder;
+
+    private RelativeEncoder mDriveEncoder;
+    private RelativeEncoder mAngleEncoder;
+
+    private SparkMaxPIDController mDrivePIDController;
+    private SparkMaxPIDController mAnglePIDController;
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 
@@ -29,23 +43,33 @@ public class SwerveModule {
     private double simSpeedCache;
     private Rotation2d simAngleCache = Rotation2d.fromDegrees(0);
 
+//    private Mechanism2d simModule = new Mechanism2d(1,1);
+//    MechanismRoot2d simModuleRoot = simModule.getRoot("Center", .5,.5);
+
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
         this.angleOffset = moduleConstants.angleOffset;
         
-        /* Angle Encoder Config */
-        angleEncoder = new CANCoder(moduleConstants.cancoderID);
+        /* Absolute Encoder */
+        absoluteEncoder = new CANCoder(moduleConstants.cancoderID);
         configAngleEncoder();
 
-        /* Angle Motor Config */
+        /* Angle Motor */
         mAngleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
+        mAngleEncoder = mAngleMotor.getEncoder();
+        mAnglePIDController = mAngleMotor.getPIDController();
         configAngleMotor();
 
-        /* Drive motor Config */
+        /* Drive motor */
         mDriveMotor = new CANSparkMax(moduleConstants.driveMotorID, MotorType.kBrushless);
+        mDriveEncoder = mDriveMotor.getEncoder();
+        mDrivePIDController = mDriveMotor.getPIDController();
         configDriveMotor();
 
         lastAngle = getState().angle;
+
+//        MechanismObject2d swerveMod = simModuleRoot.append(new MechanismLigament2d("Module", .5,90));
+//        swerveMod.
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
@@ -70,31 +94,31 @@ public class SwerveModule {
     }
 
     private void setAngle(SwerveModuleState desiredState){
-        Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+        Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less than 1%. Prevents Jittering.
         // mAngleMotor_ctre.set(ControlMode.Position, Conversions.degreesToFalcon(angle.getDegrees(), Constants.Swerve.angleGearRatio));
         mAngleMotor.getPIDController().setReference(angle.getDegrees(), ControlType.kPosition);
         lastAngle = angle;
     }
 
     private Rotation2d getAngle(){
-        if (Robot.isReal()) return Rotation2d.fromDegrees(mAngleMotor.getEncoder().getPosition());
+        if (Robot.isReal()) return Rotation2d.fromDegrees(mAngleEncoder.getPosition());
         return simAngleCache; // If sim.
         // return Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor_ctre.getSelectedSensorPosition(), Constants.Swerve.angleGearRatio));
     }
 
     public Rotation2d getCanCoder(){
-        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
+        return Rotation2d.fromDegrees(absoluteEncoder.getAbsolutePosition());
     }
 
     private void resetToAbsolute(){
         // double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset.getDegrees(), Constants.Swerve.angleGearRatio);
         // mAngleMotor_ctre.setSelectedSensorPosition(absolutePosition);
-        mAngleMotor.getEncoder().setPosition(getCanCoder().getDegrees() - angleOffset.getDegrees());
+        mAngleEncoder.setPosition(getCanCoder().getDegrees() - angleOffset.getDegrees());
     }
 
     private void configAngleEncoder(){        
-        angleEncoder.configFactoryDefault();
-        angleEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
+        absoluteEncoder.configFactoryDefault();
+        absoluteEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
     }
 
     private void configAngleMotor(){
@@ -108,14 +132,14 @@ public class SwerveModule {
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         mAngleMotor.setIdleMode(Constants.Swerve.angleNeutralMode);
         
-        mAngleMotor.getEncoder().setPositionConversionFactor((1/Constants.Swerve.chosenModule.angleGearRatio) // We do 1 over the gear ratio because 1 rotation of the motor is < 1 rotation of the module        
+        mAngleEncoder.setPositionConversionFactor((1/Constants.Swerve.chosenModule.angleGearRatio) // We do 1 over the gear ratio because 1 rotation of the motor is < 1 rotation of the module
                 * 360); // 1/360 rotations is 1 degree, 1 rotation is 360 degrees.
         resetToAbsolute();
 
-        mAngleMotor.getPIDController().setP(Constants.Swerve.angleKP);
-        mAngleMotor.getPIDController().setI(Constants.Swerve.angleKI);
-        mAngleMotor.getPIDController().setD(Constants.Swerve.angleKD);
-        mAngleMotor.getPIDController().setFF(Constants.Swerve.angleKF);
+        mAnglePIDController.setP(Constants.Swerve.angleKP);
+        mAnglePIDController.setI(Constants.Swerve.angleKI);
+        mAnglePIDController.setD(Constants.Swerve.angleKD);
+        mAnglePIDController.setFF(Constants.Swerve.angleKF);
 
         mAngleMotor.getPIDController().setOutputRange(-.25, .25);
     }
@@ -129,24 +153,24 @@ public class SwerveModule {
         mDriveMotor.setOpenLoopRampRate(Constants.Swerve.openLoopRamp);
         mDriveMotor.setClosedLoopRampRate(Constants.Swerve.closedLoopRamp);
 
-        mDriveMotor.getEncoder().setVelocityConversionFactor(1/Constants.Swerve.chosenModule.driveGearRatio // 1/gear ratio because the wheel spins slower than the motor.
-                * Constants.Swerve.chosenModule.wheelCircumference // Multiply by the circumference to get meters per miniute
+        mDriveEncoder.setVelocityConversionFactor(1/Constants.Swerve.chosenModule.driveGearRatio // 1/gear ratio because the wheel spins slower than the motor.
+                * Constants.Swerve.chosenModule.wheelCircumference // Multiply by the circumference to get meters per minute
                 / 60); // Devide by 60 to get meters per second.
-        mDriveMotor.getEncoder().setPosition(0);
+        mDriveEncoder.setPosition(0);
 
-        mDriveMotor.getPIDController().setP(Constants.Swerve.driveKP);
-        mDriveMotor.getPIDController().setI(Constants.Swerve.driveKI);
-        mDriveMotor.getPIDController().setD(Constants.Swerve.driveKD);
-        mDriveMotor.getPIDController().setFF(Constants.Swerve.driveKF); // Not actually used because we specify our feedforward when we set our speed.
+        mDrivePIDController.setP(Constants.Swerve.driveKP);
+        mDrivePIDController.setI(Constants.Swerve.driveKI);
+        mDrivePIDController.setD(Constants.Swerve.driveKD);
+        mDrivePIDController.setFF(Constants.Swerve.driveKF); // Not actually used because we specify our feedforward when we set our speed.
 
-        mDriveMotor.getPIDController().setOutputRange(-.5, .5);
+        mDrivePIDController.setOutputRange(-.5, .5);
 
     }
 
     public SwerveModuleState getState(){
         return new SwerveModuleState(
             // Conversions.falconToMPS(mDriveMotor_ctre.getSelectedSensorVelocity(), Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio),
-            Robot.isReal() ? mDriveMotor.getEncoder().getVelocity() : simSpeedCache, 
+            Robot.isReal() ? mDriveEncoder.getVelocity() : simSpeedCache,
             getAngle()
         ); 
     }

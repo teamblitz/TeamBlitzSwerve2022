@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -21,6 +22,9 @@ import frc.lib.util.COTSSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 import frc.robot.utils.ButtonBox;
 import frc.robot.utils.SaitekX52Joystick;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
 * The Constants class provides a convenient place for teams to hold robot-wide
@@ -56,6 +60,32 @@ public final class Constants {
 
         /* Angle Encoder Invert */
         public static final boolean canCoderInvert = chosenModule.canCoderInvert;
+
+        static public final int FL = 0; // Front Left Module Index
+        static public final int FR = 1; // Front Right Module Index
+        static public final int BL = 2; // Back Left Module Index
+        static public final int BR = 3; // Back Right Module Index
+
+        static public final List<Translation2d> robotToModuleTL = Arrays.asList(
+                new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+                new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+                new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+                new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0)
+        );
+
+        static public final List<Transform2d> robotToModuleTF = Arrays.asList(
+                new Transform2d(robotToModuleTL.get(FL), new Rotation2d(0.0)),
+                new Transform2d(robotToModuleTL.get(FR), new Rotation2d(0.0)),
+                new Transform2d(robotToModuleTL.get(BL), new Rotation2d(0.0)),
+                new Transform2d(robotToModuleTL.get(BR), new Rotation2d(0.0))
+        );
+
+        static public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+                robotToModuleTL.get(FL),
+                robotToModuleTL.get(FR),
+                robotToModuleTL.get(BL),
+                robotToModuleTL.get(BR)
+        );
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
                 new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
