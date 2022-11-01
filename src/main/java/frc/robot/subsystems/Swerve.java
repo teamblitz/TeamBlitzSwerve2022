@@ -6,6 +6,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.Robot;
 import frc.robot.SwerveModule;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -96,7 +97,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        return (invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
+        return(invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     @Override
@@ -111,7 +112,7 @@ public class Swerve extends SubsystemBase {
 
     public void initTelemetry(){
         for(SwerveModule mod : mSwerveMods){
-            shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Cancoder", () -> mod.getCanCoder().getDegrees());
+            shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " CanCoder", () -> mod.getCanCoder().getDegrees());
             shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Integrated", () -> mod.getState().angle.getDegrees());
             shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Rotation", () -> mod.getState().angle.getDegrees());
             shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Velocity", () -> mod.getState().speedMetersPerSecond); 

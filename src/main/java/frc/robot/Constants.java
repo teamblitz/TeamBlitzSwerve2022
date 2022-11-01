@@ -80,18 +80,11 @@ public final class Constants {
                 new Transform2d(robotToModuleTL.get(BR), new Rotation2d(0.0))
         );
 
-        static public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+        public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
                 robotToModuleTL.get(FL),
                 robotToModuleTL.get(FR),
                 robotToModuleTL.get(BL),
-                robotToModuleTL.get(BR)
-        );
-
-        public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-                new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-                new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
-                new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-                new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
+                robotToModuleTL.get(BR));
 
         /* Swerve Current Limiting */
         // public static final int angleContinuousCurrentLimit = 25;
