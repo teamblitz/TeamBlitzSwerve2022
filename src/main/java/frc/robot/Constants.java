@@ -86,7 +86,7 @@ public final class Constants {
                 robotToModuleTL.get(BL),
                 robotToModuleTL.get(BR));
 
-        /* Swerve Current Limiting */
+        /* DriveSubsystem Current Limiting */
         // public static final int angleContinuousCurrentLimit = 25;
         // public static final int anglePeakCurrentLimit = 40;
         // public static final double anglePeakCurrentDuration = 0.1;
@@ -134,7 +134,7 @@ public final class Constants {
         public static final double driveKV = (1.51 / 12);
         public static final double driveKA = (0.27 / 12);
 
-        /* Swerve Profiling Values */
+        /* DriveSubsystem Profiling Values */
         /**
          * Meters per Second
          */

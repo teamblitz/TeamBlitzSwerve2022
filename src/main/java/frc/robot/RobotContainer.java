@@ -9,12 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.SwerveSimTest;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
 * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -26,7 +24,7 @@ public class RobotContainer {
 
   /* ***** --- Subsystems --- ***** */
 
-  private Swerve m_drive;
+  private DriveSubsystem m_drive;
 
   private XboxController m_driveController;
 
@@ -60,7 +58,7 @@ public class RobotContainer {
 
 
   private void configureSubsystems() {
-    m_drive = new Swerve();
+    m_drive = new DriveSubsystem();
     m_driveController = new XboxController(0);
   }
 

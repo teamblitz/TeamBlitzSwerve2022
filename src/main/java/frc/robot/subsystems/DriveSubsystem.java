@@ -6,7 +6,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Robot;
 import frc.robot.SwerveModule;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -22,16 +21,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Swerve.*;
 
-public class Swerve extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public AHRS gyro;
 
-    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Swerve");
+    private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("DriveSubsystem");
 
     private final Field2d field = new Field2d();
 
-    public Swerve() {
+    public DriveSubsystem() {
         gyro = new AHRS();
         zeroGyro();
         
@@ -97,7 +96,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        return(invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
+        return (invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     @Override

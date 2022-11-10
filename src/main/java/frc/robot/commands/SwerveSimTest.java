@@ -5,19 +5,19 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class SwerveSimTest extends CommandBase{
-    private Swerve s_Swerve;    
+    private DriveSubsystem s_Swerve;
     private ShuffleboardTab tab;
     private NetworkTableEntry translationEntry;
     private NetworkTableEntry strafeEntry;
     private NetworkTableEntry rotationEntry;
 
-    public SwerveSimTest(Swerve s_Swerve) {
+    public SwerveSimTest(DriveSubsystem s_Swerve) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
-        tab = Shuffleboard.getTab("Swerve");
+        tab = Shuffleboard.getTab("DriveSubsystem");
         translationEntry = tab.add("Translation", 0).getEntry();
         strafeEntry = tab.add("Strafe", 0).getEntry();
         rotationEntry = tab.add("Rotation", 0).getEntry();
