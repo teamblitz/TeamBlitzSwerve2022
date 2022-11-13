@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.lib.oi;
 
 import edu.wpi.first.wpilibj.GenericHID;
 
