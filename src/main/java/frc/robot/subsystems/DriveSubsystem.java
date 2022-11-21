@@ -1,4 +1,4 @@
-/* Big thanks to Team 364 for the base code. */
+/* Big thanks to Team 364 for the base swerve code. */
 
 package frc.robot.subsystems;
 
@@ -6,6 +6,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.lib.BlitzSubsystem;
 import frc.robot.SwerveModule;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -21,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Swerve.*;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public AHRS gyro;
@@ -74,6 +75,9 @@ public class DriveSubsystem extends SubsystemBase {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
     }
+
+//    public void park
+
     public SwerveModuleState[] getModuleStates(){
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
@@ -111,7 +115,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void initTelemetry(){
         for(SwerveModule mod : mSwerveMods){
-            shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " CanCoder", () -> mod.getCanCoder().getDegrees());
+            shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " CanCoder", () -> mod.getAbsoluteAngle().getDegrees());
             shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Integrated", () -> mod.getState().angle.getDegrees());
             shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Rotation", () -> mod.getState().angle.getDegrees());
             shuffleboardTab.addNumber("Mod " + mod.moduleNumber + " Velocity", () -> mod.getState().speedMetersPerSecond); 

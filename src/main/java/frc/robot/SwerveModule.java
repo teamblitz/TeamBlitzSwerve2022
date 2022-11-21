@@ -6,14 +6,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismObject2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import frc.lib.util.ModuleStateOptimizer;
 import frc.lib.util.SwerveModuleConstants;
-
-import javax.naming.ldap.ManageReferralControl;
 
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
@@ -43,9 +37,6 @@ public class SwerveModule {
     private double simSpeedCache;
     private Rotation2d simAngleCache = Rotation2d.fromDegrees(0);
 
-//    private Mechanism2d simModule = new Mechanism2d(1,1);
-//    MechanismRoot2d simModuleRoot = simModule.getRoot("Center", .5,.5);
-
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
         this.angleOffset = moduleConstants.angleOffset;
@@ -67,9 +58,6 @@ public class SwerveModule {
         configDriveMotor();
 
         lastAngle = getState().angle;
-
-//        MechanismObject2d swerveMod = simModuleRoot.append(new MechanismLigament2d("Module", .5,90));
-//        swerveMod.
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
@@ -103,17 +91,14 @@ public class SwerveModule {
     private Rotation2d getAngle(){
         if (Robot.isReal()) return Rotation2d.fromDegrees(mAngleEncoder.getPosition());
         return simAngleCache; // If sim.
-        // return Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor_ctre.getSelectedSensorPosition(), Constants.DriveSubsystem.angleGearRatio));
     }
 
-    public Rotation2d getCanCoder(){
+    public Rotation2d getAbsoluteAngle(){
         return Rotation2d.fromDegrees(absoluteEncoder.getAbsolutePosition());
     }
 
     private void resetToAbsolute(){
-        // double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset.getDegrees(), Constants.DriveSubsystem.angleGearRatio);
-        // mAngleMotor_ctre.setSelectedSensorPosition(absolutePosition);
-        mAngleEncoder.setPosition(getCanCoder().getDegrees() - angleOffset.getDegrees());
+        mAngleEncoder.setPosition(getAbsoluteAngle().getDegrees() - angleOffset.getDegrees());
     }
 
     private void configAngleEncoder(){        
@@ -121,11 +106,7 @@ public class SwerveModule {
         absoluteEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
     }
 
-    private void configAngleMotor(){
-        // mAngleMotor_ctre.configFactoryDefault();
-        // mAngleMotor_ctre.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
-        // mAngleMotor_ctre.setInverted(Constants.DriveSubsystem.angleMotorInvert);
-        // mAngleMotor_ctre.setNeutralMode(Constants.DriveSubsystem.angleNeutralMode);
+    private void configAngleMotor() {
         mAngleMotor.restoreFactoryDefaults();
         mAngleMotor.setSmartCurrentLimit(Constants.Swerve.angleSmartCurrentLimit);
         mAngleMotor.setSecondaryCurrentLimit(Constants.Swerve.angleSecondaryCurrentLimit);
@@ -141,6 +122,7 @@ public class SwerveModule {
         mAnglePIDController.setD(Constants.Swerve.angleKD);
         mAnglePIDController.setFF(Constants.Swerve.angleKF);
 
+        // TODO: Adjust this latter after we know the pid loop is not crazy
         mAngleMotor.getPIDController().setOutputRange(-.25, .25);
     }
 
@@ -155,7 +137,7 @@ public class SwerveModule {
 
         mDriveEncoder.setVelocityConversionFactor(1/Constants.Swerve.chosenModule.driveGearRatio // 1/gear ratio because the wheel spins slower than the motor.
                 * Constants.Swerve.chosenModule.wheelCircumference // Multiply by the circumference to get meters per minute
-                / 60); // Devide by 60 to get meters per second.
+                / 60); // Divide by 60 to get meters per second.
         mDriveEncoder.setPosition(0);
 
         mDrivePIDController.setP(Constants.Swerve.driveKP);
@@ -163,13 +145,13 @@ public class SwerveModule {
         mDrivePIDController.setD(Constants.Swerve.driveKD);
         mDrivePIDController.setFF(Constants.Swerve.driveKF); // Not actually used because we specify our feedforward when we set our speed.
 
+        // TODO: Remove after we know the pid loop isn't wild
         mDrivePIDController.setOutputRange(-.5, .5);
 
     }
 
     public SwerveModuleState getState(){
         return new SwerveModuleState(
-            // Conversions.falconToMPS(mDriveMotor_ctre.getSelectedSensorVelocity(), Constants.DriveSubsystem.wheelCircumference, Constants.DriveSubsystem.driveGearRatio),
             Robot.isReal() ? mDriveEncoder.getVelocity() : simSpeedCache,
             getAngle()
         ); 
