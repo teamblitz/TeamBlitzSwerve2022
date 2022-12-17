@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class SwerveSimTest extends CommandBase{
+public class SwerveSimTest extends CommandBase {
     private DriveSubsystem s_Swerve;
     private ShuffleboardTab tab;
     private NetworkTableEntry translationEntry;
@@ -24,13 +24,17 @@ public class SwerveSimTest extends CommandBase{
     }
 
     @Override
-    public void initialize() {
+    public void initialize() {}
 
-    }
     @Override
     public void execute() {
-        s_Swerve.drive(new Translation2d(translationEntry.getDouble(0), strafeEntry.getDouble(0)), rotationEntry.getDouble(0) , false, true);
+        s_Swerve.drive(
+                new Translation2d(translationEntry.getDouble(0), strafeEntry.getDouble(0)),
+                rotationEntry.getDouble(0),
+                false,
+                true);
     }
+
     @Override
     public boolean isFinished() {
         return false;

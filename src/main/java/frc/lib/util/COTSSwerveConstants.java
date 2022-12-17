@@ -16,7 +16,17 @@ public class COTSSwerveConstants {
     public final boolean angleMotorInvert;
     public final boolean canCoderInvert;
 
-    public COTSSwerveConstants(double wheelDiameter, double angleGearRatio, double driveGearRatio, double angleKP, double angleKI, double angleKD, double angleKF, boolean driveMotorInvert, boolean angleMotorInvert, boolean canCoderInvert){
+    public COTSSwerveConstants(
+            double wheelDiameter,
+            double angleGearRatio,
+            double driveGearRatio,
+            double angleKP,
+            double angleKI,
+            double angleKD,
+            double angleKF,
+            boolean driveMotorInvert,
+            boolean angleMotorInvert,
+            boolean canCoderInvert) {
         this.wheelDiameter = wheelDiameter;
         this.wheelCircumference = wheelDiameter * Math.PI;
         this.angleGearRatio = angleGearRatio;
@@ -29,27 +39,37 @@ public class COTSSwerveConstants {
         this.angleMotorInvert = angleMotorInvert;
         this.canCoderInvert = canCoderInvert;
     }
-    
-    /** DriveSubsystem Drive Specialties - MK4 Module*/
-    public static COTSSwerveConstants SDSMK4(double driveGearRatio){
+
+    /** DriveSubsystem Drive Specialties - MK4 Module */
+    public static COTSSwerveConstants SDSMK4(double driveGearRatio) {
         double wheelDiameter = Units.inchesToMeters(4.0);
- 
+
         /** 12.8 : 1 */
         double angleGearRatio = (12.8 / 1.0);
- 
+
         double angleKP = 0.2;
         double angleKI = 0.0;
         double angleKD = 0.0;
         double angleKF = 0.0;
- 
+
         boolean driveMotorInvert = false;
         boolean angleMotorInvert = false;
         boolean canCoderInvert = false;
-        return new COTSSwerveConstants(wheelDiameter, angleGearRatio, driveGearRatio, angleKP, angleKI, angleKD, angleKF, driveMotorInvert, angleMotorInvert, canCoderInvert);
+        return new COTSSwerveConstants(
+                wheelDiameter,
+                angleGearRatio,
+                driveGearRatio,
+                angleKP,
+                angleKI,
+                angleKD,
+                angleKF,
+                driveMotorInvert,
+                angleMotorInvert,
+                canCoderInvert);
     }
 
-    /** DriveSubsystem Drive Specialties - MK4i Module*/
-    public static COTSSwerveConstants SDSMK4i(double driveGearRatio){
+    /** DriveSubsystem Drive Specialties - MK4i Module */
+    public static COTSSwerveConstants SDSMK4i(double driveGearRatio) {
         double wheelDiameter = Units.inchesToMeters(4.0);
 
         /** (150 / 7) : 1 */
@@ -63,10 +83,20 @@ public class COTSSwerveConstants {
         boolean driveMotorInvert = false;
         boolean angleMotorInvert = true;
         boolean canCoderInvert = false;
-        return new COTSSwerveConstants(wheelDiameter, angleGearRatio, driveGearRatio, angleKP, angleKI, angleKD, angleKF, driveMotorInvert, angleMotorInvert, canCoderInvert);
+        return new COTSSwerveConstants(
+                wheelDiameter,
+                angleGearRatio,
+                driveGearRatio,
+                angleKP,
+                angleKI,
+                angleKD,
+                angleKF,
+                driveMotorInvert,
+                angleMotorInvert,
+                canCoderInvert);
     }
 
-    public class driveGearRatios{
+    public class driveGearRatios {
         /* SDS MK4 */
         /** SDS MK4 - 8.14 : 1 */
         public static final double SDSMK4_L1 = (8.14 / 1.0);
@@ -76,7 +106,7 @@ public class COTSSwerveConstants {
         public static final double SDSMK4_L3 = (6.12 / 1.0);
         /** SDS MK4 - 5.14 : 1 */
         public static final double SDSMK4_L4 = (5.14 / 1.0);
-        
+
         /* SDS MK4i */
         /** SDS MK4i - 8.14 : 1 */
         public static final double SDSMK4i_L1 = (8.14 / 1.0);
@@ -86,5 +116,3 @@ public class COTSSwerveConstants {
         public static final double SDSMK4i_L3 = (6.12 / 1.0);
     }
 }
-
-  

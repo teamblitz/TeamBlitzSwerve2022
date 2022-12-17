@@ -11,9 +11,9 @@ public class ButtonBox extends GenericHID {
     @Override
     public boolean getRawButton(int button) {
         if (button == 1000) {
-            return getRawAxis(2) > .75; 
+            return getRawAxis(2) > .75;
         } else if (button == 1001) {
-            return getRawAxis(3) < -.75; 
+            return getRawAxis(3) < -.75;
         } else {
             return super.getRawButton(button);
         }
@@ -39,8 +39,8 @@ public class ButtonBox extends GenericHID {
     }
 
     public enum Axis {
-       kY(1),
-       kX(0);
+        kY(1),
+        kX(0);
 
         public final int value;
 
@@ -48,6 +48,4 @@ public class ButtonBox extends GenericHID {
             this.value = value;
         }
     }
-    
-    
 }
