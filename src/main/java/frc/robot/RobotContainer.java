@@ -24,17 +24,15 @@ public class RobotContainer {
 
     /* ***** --- Subsystems --- ***** */
 
-    private DriveSubsystem m_drive;
-
-    private XboxController m_driveController;
+    private DriveSubsystem driveSubsystem;
 
     /* ***** --- Controllers --- ***** */
+    private XboxController driveController;
 
     public RobotContainer() {
         configureSubsystems();
-        // buildCommands();
-        // setDefaultCommands();
-        CameraServer.startAutomaticCapture();
+
+        CameraServer.startAutomaticCapture();  // Ignore warning.
 
         configureButtonBindings();
 
@@ -42,21 +40,19 @@ public class RobotContainer {
     }
 
     private void setDefaultCommands() {
-        // Set defalut command for drive
-        m_drive.setDefaultCommand(
+        // Set default command for drive
+        driveSubsystem.setDefaultCommand(
                 new TeleopSwerve(
-                        m_drive,
-                        () -> m_driveController.getLeftY(),
-                        () -> m_driveController.getLeftX(),
-                        () -> m_driveController.getRightX(),
+                        driveSubsystem,
+                        () -> driveController.getLeftY(),
+                        () -> driveController.getLeftX(),
+                        () -> driveController.getRightX(),
                         () -> true));
-        // m_drive.setDefaultCommand(new SwerveSimTest(m_drive));
-
     }
 
     private void configureSubsystems() {
-        m_drive = new DriveSubsystem();
-        m_driveController = new XboxController(0);
+        driveSubsystem = new DriveSubsystem();
+        driveController = new XboxController(0);
     }
 
     /**
@@ -67,7 +63,7 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {}
 
-    public Command getAutonomousCommands() { // Autonomous code goes here
+    public Command getAutonomousCommand() { // Autonomous code goes here
         return null;
     }
 }

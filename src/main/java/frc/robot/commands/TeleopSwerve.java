@@ -9,11 +9,11 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class TeleopSwerve extends CommandBase {
-    private DriveSubsystem s_Swerve;
-    private DoubleSupplier translationSup;
-    private DoubleSupplier strafeSup;
-    private DoubleSupplier rotationSup;
-    private BooleanSupplier robotCentricSup;
+    private final DriveSubsystem driveSubsystem;
+    private final DoubleSupplier translationSup;
+    private final DoubleSupplier strafeSup;
+    private final DoubleSupplier rotationSup;
+    private final BooleanSupplier robotCentricSup;
 
     public TeleopSwerve(
             DriveSubsystem s_Swerve,
@@ -21,7 +21,7 @@ public class TeleopSwerve extends CommandBase {
             DoubleSupplier strafeSup,
             DoubleSupplier rotationSup,
             BooleanSupplier robotCentricSup) {
-        this.s_Swerve = s_Swerve;
+        this.driveSubsystem = s_Swerve;
         addRequirements(s_Swerve);
 
         this.translationSup = translationSup;
@@ -34,15 +34,15 @@ public class TeleopSwerve extends CommandBase {
     public void execute() {
         /* Get Values, Deadband*/
         double translationVal =
-                MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
-        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
+                MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.STICK_DEADBAND);
+        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.STICK_DEADBAND);
         double rotationVal =
-                MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
+                MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.STICK_DEADBAND);
 
         /* Drive */
-        s_Swerve.drive(
-                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
-                rotationVal * Constants.Swerve.maxAngularVelocity,
+        driveSubsystem.drive(
+                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.MAX_SPEED),
+                rotationVal * Constants.Swerve.MAX_ANGULAR_VELOCITY,
                 !robotCentricSup.getAsBoolean(),
                 true);
     }

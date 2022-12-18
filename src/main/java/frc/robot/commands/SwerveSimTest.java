@@ -8,16 +8,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class SwerveSimTest extends CommandBase {
-    private DriveSubsystem s_Swerve;
-    private ShuffleboardTab tab;
-    private NetworkTableEntry translationEntry;
-    private NetworkTableEntry strafeEntry;
-    private NetworkTableEntry rotationEntry;
+    private final DriveSubsystem driveSubsystem;
+    private final NetworkTableEntry translationEntry;
+    private final NetworkTableEntry strafeEntry;
+    private final NetworkTableEntry rotationEntry;
 
     public SwerveSimTest(DriveSubsystem s_Swerve) {
-        this.s_Swerve = s_Swerve;
+        this.driveSubsystem = s_Swerve;
         addRequirements(s_Swerve);
-        tab = Shuffleboard.getTab("DriveSubsystem");
+
+        ShuffleboardTab tab = Shuffleboard.getTab("DriveSubsystem");
         translationEntry = tab.add("Translation", 0).getEntry();
         strafeEntry = tab.add("Strafe", 0).getEntry();
         rotationEntry = tab.add("Rotation", 0).getEntry();
@@ -28,7 +28,7 @@ public class SwerveSimTest extends CommandBase {
 
     @Override
     public void execute() {
-        s_Swerve.drive(
+        driveSubsystem.drive(
                 new Translation2d(translationEntry.getDouble(0), strafeEntry.getDouble(0)),
                 rotationEntry.getDouble(0),
                 false,

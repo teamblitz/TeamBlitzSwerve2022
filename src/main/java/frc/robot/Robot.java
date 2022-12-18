@@ -14,18 +14,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
-    public static CTREConfigs ctreConfigs;
-    private Command m_autonomousCommands;
-    private RobotContainer m_robotContainer;
-    private StatusManager statusManager;
+    public static CTREConfigs ctreConfigs; // This needs to be fixed.
+    private Command autonomousCommand;
+    private RobotContainer robotContainer;
 
     @Override
     public void robotInit() {
         ctreConfigs = new CTREConfigs();
-        m_robotContainer = new RobotContainer();
+        robotContainer = new RobotContainer();
 
         System.out.println("Robot Start up at: " + Timer.getFPGATimestamp());
-        statusManager = StatusManager.getInstance();
+        StatusManager statusManager = StatusManager.getInstance();
         addPeriodic(statusManager, .2, .01);
     }
 
@@ -43,11 +42,11 @@ public class Robot extends TimedRobot {
     // Called at the start of autonomous.
     @Override
     public void autonomousInit() {
-        m_autonomousCommands = m_robotContainer.getAutonomousCommands();
+        autonomousCommand = robotContainer.getAutonomousCommand();
 
         // schedule autonomous commands
-        if (m_autonomousCommands != null) {
-            m_autonomousCommands.schedule();
+        if (autonomousCommand != null) {
+            autonomousCommand.schedule();
         }
     }
 
@@ -59,8 +58,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousExit() {
         // Cancel autonomous commands
-        if (m_autonomousCommands != null) {
-            m_autonomousCommands.cancel();
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
     }
 

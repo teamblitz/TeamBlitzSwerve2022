@@ -33,14 +33,14 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
         gyro = new AHRS();
         zeroGyro();
 
-        swerveOdometry = new SwerveDriveOdometry(swerveKinematics, getYaw());
+        swerveOdometry = new SwerveDriveOdometry(KINEMATICS, getYaw());
 
         mSwerveMods =
                 new SwerveModule[] { // front left, front rigt, back left, back right.
-                    new SwerveModule(FL, Mod0.constants),
-                    new SwerveModule(FR, Mod1.constants),
-                    new SwerveModule(BL, Mod2.constants),
-                    new SwerveModule(BR, Mod3.constants)
+                    new SwerveModule(FL, Mod0.CONSTANTS),
+                    new SwerveModule(FR, Mod1.CONSTANTS),
+                    new SwerveModule(BL, Mod2.CONSTANTS),
+                    new SwerveModule(BR, Mod3.CONSTANTS)
                 };
         initTelemetry();
     }
@@ -48,13 +48,13 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     public void drive(
             Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates =
-                swerveKinematics.toSwerveModuleStates(
+                KINEMATICS.toSwerveModuleStates(
                         fieldRelative
                                 ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                         translation.getX(), translation.getY(), rotation, getYaw())
                                 : new ChassisSpeeds(
                                         translation.getX(), translation.getY(), rotation));
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, maxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
 
         for (SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
@@ -64,7 +64,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     /* Used by SwerveControllerCommand in Auto */
     // Use in above method?
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, maxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_SPEED);
 
         for (SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
@@ -138,28 +138,28 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
                         getPose()
                                 .transformBy(
                                         new Transform2d(
-                                                robotToModuleTL.get(FL),
+                                                CENTER_TO_MODULE.get(FL),
                                                 swerveModuleStates[FL].angle)));
         field.getObject("frontRight")
                 .setPose(
                         getPose()
                                 .transformBy(
                                         new Transform2d(
-                                                robotToModuleTL.get(FR),
+                                                CENTER_TO_MODULE.get(FR),
                                                 swerveModuleStates[FR].angle)));
         field.getObject("backLeft")
                 .setPose(
                         getPose()
                                 .transformBy(
                                         new Transform2d(
-                                                robotToModuleTL.get(BL),
+                                                CENTER_TO_MODULE.get(BL),
                                                 swerveModuleStates[BL].angle)));
         field.getObject("backRight")
                 .setPose(
                         getPose()
                                 .transformBy(
                                         new Transform2d(
-                                                robotToModuleTL.get(BR),
+                                                CENTER_TO_MODULE.get(BR),
                                                 swerveModuleStates[BR].angle)));
     }
 }
