@@ -1,6 +1,6 @@
 package frc.lib.oi;
 
-import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
+import static edu.wpi.first.util.ErrorMessages.requireNonNullParam;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS4Controller;

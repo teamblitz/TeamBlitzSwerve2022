@@ -5,6 +5,8 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.Swerve.*;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -12,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -33,7 +36,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
         gyro = new AHRS();
         zeroGyro();
 
-        swerveOdometry = new SwerveDriveOdometry(KINEMATICS, getYaw());
+        swerveOdometry = new SwerveDriveOdometry(KINEMATICS, getYaw(), getModulePositions());
 
         mSwerveMods =
                 new SwerveModule[] { // front left, front rigt, back left, back right.
@@ -81,12 +84,21 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
         return states;
     }
 
+    public SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[] {
+                mSwerveMods[0].getPositon(),
+                mSwerveMods[1].getPositon(),
+                mSwerveMods[2].getPositon(),
+                mSwerveMods[3].getPositon()
+              };
+    }
+
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
     }
 
     public void resetOdometry(Pose2d pose) {
-        swerveOdometry.resetPosition(pose, getYaw());
+        swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
     }
 
     public void zeroGyro() {
@@ -101,7 +113,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     @Override
     public void periodic() {
-        swerveOdometry.update(getYaw(), getModuleStates());
+        swerveOdometry.update(getYaw(), getModulePositions());
     }
 
     @Override

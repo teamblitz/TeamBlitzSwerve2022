@@ -4,6 +4,8 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -26,7 +28,7 @@ public class StatusManager implements Runnable {
 
     private final Set<MotorController> motors = new HashSet<>();
 
-    private final Map<MotorController, NetworkTableEntry> motorStatus = new HashMap<>();
+    private final Map<MotorController, GenericEntry> motorStatus = new HashMap<>();
     private final ShuffleboardTab tab = Shuffleboard.getTab("Motors");
 
     private StatusManager() {}

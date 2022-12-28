@@ -10,6 +10,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.util.ModuleStateOptimizer;
 import frc.lib.util.SwerveModuleConstants;
@@ -87,9 +88,6 @@ public class SwerveModule {
                             0,
                             feedforward.calculate(desiredState.speedMetersPerSecond),
                             SparkMaxPIDController.ArbFFUnits.kVoltage);
-            // mDriveMotor.set(ControlMode.Velocity, desiredState.speedMetersPerSecond,
-            // DemandType.ArbitraryFeedForward,
-            // feedforward.calculate(desiredState.speedMetersPerSecond));
         }
     }
 
@@ -132,9 +130,7 @@ public class SwerveModule {
         angleMotor.setIdleMode(Constants.Swerve.ANGLE_NEUTRAL_MODE);
 
         angleEncoder.setPositionConversionFactor(
-                (1
-                                / Constants.Swerve.chosenModule
-                                        .angleGearRatio) // We do 1 over the gear ratio because 1
+                (1 / Constants.Swerve.ANGLE_GEAR_RATIO) // We do 1 over the gear ratio because 1
                         // rotation of the motor is < 1 rotation of
                         // the module
                         * 360); // 1/360 rotations is 1 degree, 1 rotation is 360 degrees.
@@ -164,6 +160,10 @@ public class SwerveModule {
                         * Constants.Swerve.WHEEL_CIRCUMFERENCE // Multiply by the circumference to get meters
                         // per minute
                         / 60); // Divide by 60 to get meters per second.
+        driveEncoder.setPositionConversionFactor(
+                1 / Constants.Swerve.DRIVE_GEAR_RATIO * 
+                Constants.Swerve.WHEEL_CIRCUMFERENCE
+        );
         driveEncoder.setPosition(0);
 
         drivePIDController.setP(Constants.Swerve.DRIVE_KP);
@@ -181,5 +181,9 @@ public class SwerveModule {
     public SwerveModuleState getState() {
         return new SwerveModuleState(
                 Robot.isReal() ? driveEncoder.getVelocity() : simSpeedCache, getAngle());
+    }
+
+    public SwerveModulePosition getPositon() {
+        return new SwerveModulePosition(driveEncoder.getPosition(), getAngle());
     }
 }

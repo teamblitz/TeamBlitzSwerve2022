@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -9,9 +9,9 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class SwerveSimTest extends CommandBase {
     private final DriveSubsystem driveSubsystem;
-    private final NetworkTableEntry translationEntry;
-    private final NetworkTableEntry strafeEntry;
-    private final NetworkTableEntry rotationEntry;
+    private final GenericEntry translationEntry;
+    private final GenericEntry strafeEntry;
+    private final GenericEntry rotationEntry;
 
     public SwerveSimTest(DriveSubsystem s_Swerve) {
         this.driveSubsystem = s_Swerve;
