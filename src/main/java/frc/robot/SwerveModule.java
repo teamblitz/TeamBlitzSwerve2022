@@ -32,7 +32,9 @@ public class SwerveModule {
 
     private final SimpleMotorFeedforward feedforward =
             new SimpleMotorFeedforward(
-                    Constants.Swerve.DRIVE_KS, Constants.Swerve.DRIVE_KV, Constants.Swerve.DRIVE_KA);
+                    Constants.Swerve.DRIVE_KS,
+                    Constants.Swerve.DRIVE_KV,
+                    Constants.Swerve.DRIVE_KA);
 
     /* Sim Caches (basically im lazy and don't want to use the rev physics sim) */
     private double simSpeedCache;
@@ -155,15 +157,17 @@ public class SwerveModule {
         driveMotor.setClosedLoopRampRate(Constants.Swerve.CLOSED_LOOP_RAMP);
 
         driveEncoder.setVelocityConversionFactor(
-                1 / Constants.Swerve.DRIVE_GEAR_RATIO // 1/gear ratio because the wheel spins slower than
+                1
+                        / Constants.Swerve
+                                .DRIVE_GEAR_RATIO // 1/gear ratio because the wheel spins slower
+                        // than
                         // the motor.
-                        * Constants.Swerve.WHEEL_CIRCUMFERENCE // Multiply by the circumference to get meters
+                        * Constants.Swerve
+                                .WHEEL_CIRCUMFERENCE // Multiply by the circumference to get meters
                         // per minute
                         / 60); // Divide by 60 to get meters per second.
         driveEncoder.setPositionConversionFactor(
-                1 / Constants.Swerve.DRIVE_GEAR_RATIO * 
-                Constants.Swerve.WHEEL_CIRCUMFERENCE
-        );
+                1 / Constants.Swerve.DRIVE_GEAR_RATIO * Constants.Swerve.WHEEL_CIRCUMFERENCE);
         driveEncoder.setPosition(0);
 
         drivePIDController.setP(Constants.Swerve.DRIVE_KP);

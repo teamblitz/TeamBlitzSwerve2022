@@ -72,7 +72,6 @@ public final class Constants {
                         CENTER_TO_MODULE.get(BL),
                         CENTER_TO_MODULE.get(BR));
 
-
         /* Current Limits
          *
          * Current Limits attempt to prevent the motor from burning out under a stall condition, and prevent the breaker from being tripped.
@@ -108,8 +107,7 @@ public final class Constants {
         public static final double DRIVE_KF = 0.0; // Same here.
 
         /* Drive Motor Characterization Values in volts*/
-        public static final double DRIVE_KS =
-                (0.32); // TODO: This must be tuned to specific robot
+        public static final double DRIVE_KS = (0.32); // TODO: This must be tuned to specific robot
         public static final double DRIVE_KV = (1.51);
         public static final double DRIVE_KA = (0.27);
 
@@ -137,7 +135,8 @@ public final class Constants {
             public static final int CAN_CODER_ID = 1;
             public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(0.0);
             public static final SwerveModuleConstants CONSTANTS =
-                    new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
+                    new SwerveModuleConstants(
+                            DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
         }
 
         /* Front Right Module - Module 1 */
@@ -147,7 +146,8 @@ public final class Constants {
             public static final int CAN_CODER_ID = 2;
             public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(0.0);
             public static final SwerveModuleConstants CONSTANTS =
-                    new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
+                    new SwerveModuleConstants(
+                            DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
         }
 
         /* Back Left Module - Module 2 */
@@ -157,7 +157,8 @@ public final class Constants {
             public static final int CAN_CODER_ID = 3;
             public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(0.0);
             public static final SwerveModuleConstants CONSTANTS =
-                    new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
+                    new SwerveModuleConstants(
+                            DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
         }
 
         /* Back Right Module - Module 3 */
@@ -167,7 +168,8 @@ public final class Constants {
             public static final int CAN_CODER_ID = 4;
             public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(0.0);
             public static final SwerveModuleConstants CONSTANTS =
-                    new SwerveModuleConstants(DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
+                    new SwerveModuleConstants(
+                            DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
         }
     }
 
@@ -184,7 +186,8 @@ public final class Constants {
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =
                 new TrapezoidProfile.Constraints(
-                        MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+                        MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
+                        MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
     }
 
     public static final class OIConstants {

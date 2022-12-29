@@ -5,8 +5,6 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.Swerve.*;
 
 import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -86,11 +84,11 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     public SwerveModulePosition[] getModulePositions() {
         return new SwerveModulePosition[] {
-                mSwerveMods[0].getPositon(),
-                mSwerveMods[1].getPositon(),
-                mSwerveMods[2].getPositon(),
-                mSwerveMods[3].getPositon()
-              };
+            mSwerveMods[0].getPositon(),
+            mSwerveMods[1].getPositon(),
+            mSwerveMods[2].getPositon(),
+            mSwerveMods[3].getPositon()
+        };
     }
 
     public Pose2d getPose() {

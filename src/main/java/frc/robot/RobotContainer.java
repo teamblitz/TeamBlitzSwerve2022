@@ -32,7 +32,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureSubsystems();
 
-        CameraServer.startAutomaticCapture();  // Ignore warning.
+        CameraServer.startAutomaticCapture(); // Ignore warning.
 
         configureButtonBindings();
 
