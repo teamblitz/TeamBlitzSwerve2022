@@ -8,24 +8,101 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
     public static CTREConfigs ctreConfigs; // This needs to be fixed.
     private Command autonomousCommand;
     private RobotContainer robotContainer;
 
     @Override
     public void robotInit() {
+        System.out.println("Robot Start up at: " + Timer.getFPGATimestamp());
+
+        Logger logger = Logger.getInstance();
+
+        // Record metadata
+        logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+        logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+        logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+        logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+        logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+        switch (BuildConstants.DIRTY) {
+            case 0:
+                logger.recordMetadata("GitDirty", "All changes committed");
+                break;
+            case 1:
+                logger.recordMetadata("GitDirty", "Uncommitted changes");
+                break;
+            default:
+                logger.recordMetadata("GitDirty", "Unknown");
+                break;
+        }
+
+        // Set up data receivers & replay source
+
+        // Running on a real robot, try to log to a USB stick, else log to the roboRIO
+        if (isReal()) {
+            String logDir = Filesystem.getOperatingDirectory().getAbsolutePath();
+            boolean thumbDriveConnected;
+            try {
+                // The /u directory maps to the connected usb drive if one exists.
+                // If /u doesn't work replace it with /media/sda1
+                Path usbDir = Paths.get("/u").toRealPath();
+                thumbDriveConnected = Files.isWritable(usbDir);
+                if (thumbDriveConnected) {
+                    logDir = usbDir.toString();
+                    System.out.println("USB drive connected, will log to USB drive.");
+                } else {
+                    System.out.printf(
+                            "USB drive not found, will log to the %s directory on the roboRIO.%n",
+                            logDir);
+                }
+            } catch (IOException e) {
+                System.out.printf(
+                        "An IOException occurred when checking for a USB drive, will try to log to %s directory on the roboRIO.%n",
+                        logDir);
+            }
+
+            logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+            logger.addDataReceiver(new NT4Publisher());
+        } else
+            switch (Constants.simMode) {
+                    // Running a physics simulator, log to local folder
+                case SIM:
+                    logger.addDataReceiver(new WPILOGWriter(""));
+                    logger.addDataReceiver(new NT4Publisher());
+                    break;
+                    // Replaying a log, set up replay source
+                case REPLAY:
+                    setUseTiming(false); // Run as fast as possible
+                    String logPath = LogFileUtil.findReplayLog();
+                    logger.setReplaySource(new WPILOGReader(logPath));
+                    logger.addDataReceiver(
+                            new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+                    break;
+            }
+
+        // Start AdvantageKit logger
+        logger.start();
+
         ctreConfigs = new CTREConfigs();
         robotContainer = new RobotContainer();
 
         System.out.println("Robot Start up at: " + Timer.getFPGATimestamp());
-        StatusManager statusManager = StatusManager.getInstance();
-        addPeriodic(statusManager, .2, .01);
     }
 
     @Override
@@ -71,7 +148,7 @@ public class Robot extends TimedRobot {
         System.out.println("TeleopInit");
     }
 
-    // Called periodicly durring teleop
+    // Called periodically during teleop
     @Override
     public void teleopPeriodic() {}
 
@@ -88,7 +165,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancelAll();
     }
 
-    // Called periodicly durring test mode
+    // Called periodically during test mode
     @Override
     public void testPeriodic() {}
 
@@ -102,7 +179,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {}
 
-    // Called periodicly when disabled
+    // Called periodically when disabled
     @Override
     public void disabledPeriodic() {}
 

@@ -1,6 +1,6 @@
 /* Big thanks to Team 364 for the base swerve code. */
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.drive;
 
 import static frc.robot.Constants.Swerve.*;
 
@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.BlitzSubsystem;
-import frc.robot.SwerveModule;
 
 public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     public SwerveDriveOdometry swerveOdometry;
@@ -37,11 +36,11 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
         swerveOdometry = new SwerveDriveOdometry(KINEMATICS, getYaw(), getModulePositions());
 
         mSwerveMods =
-                new SwerveModule[] { // front left, front rigt, back left, back right.
-                    new SwerveModule(FL, Mod0.CONSTANTS),
-                    new SwerveModule(FR, Mod1.CONSTANTS),
-                    new SwerveModule(BL, Mod2.CONSTANTS),
-                    new SwerveModule(BR, Mod3.CONSTANTS)
+                new SwerveModule[] { // front left, front right, back left, back right.
+                    new SwerveModule(FL, new SwerveModuleIOSparkMax(Mod0.CONSTANTS)),
+                    new SwerveModule(FR, new SwerveModuleIOSparkMax(Mod1.CONSTANTS)),
+                    new SwerveModule(BL, new SwerveModuleIOSparkMax(Mod2.CONSTANTS)),
+                    new SwerveModule(BR, new SwerveModuleIOSparkMax(Mod3.CONSTANTS))
                 };
         initTelemetry();
     }
@@ -84,10 +83,10 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     public SwerveModulePosition[] getModulePositions() {
         return new SwerveModulePosition[] {
-            mSwerveMods[0].getPositon(),
-            mSwerveMods[1].getPositon(),
-            mSwerveMods[2].getPositon(),
-            mSwerveMods[3].getPositon()
+            mSwerveMods[0].getPosition(),
+            mSwerveMods[1].getPosition(),
+            mSwerveMods[2].getPosition(),
+            mSwerveMods[3].getPosition()
         };
     }
 

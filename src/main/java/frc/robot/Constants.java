@@ -28,6 +28,16 @@ import java.util.List;
  */
 public final class Constants {
 
+    public static final Mode simMode = Mode.SIM;
+
+    public static enum Mode {
+        /** Running a physics simulator. */
+        SIM,
+
+        /** Replaying from a log file. */
+        REPLAY
+    }
+
     public static final class Swerve {
         public static final int PIGEON_ID = 1;
         public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
