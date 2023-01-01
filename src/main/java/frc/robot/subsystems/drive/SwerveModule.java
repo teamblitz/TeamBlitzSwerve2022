@@ -40,11 +40,7 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        desiredState =
-                ModuleStateOptimizer.optimize(
-                        desiredState,
-                        getState().angle);
-
+        desiredState = ModuleStateOptimizer.optimize(desiredState, getState().angle);
 
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
@@ -56,7 +52,9 @@ public class SwerveModule {
             // mDriveMotor_ctre.set(ControlMode.PercentOutput, percentOutput);
             io.setDrivePercent(percentOutput);
         } else {
-            io.setDriveSetpoint(desiredState.speedMetersPerSecond, feedforward.calculate(desiredState.speedMetersPerSecond));
+            io.setDriveSetpoint(
+                    desiredState.speedMetersPerSecond,
+                    feedforward.calculate(desiredState.speedMetersPerSecond));
         }
     }
 

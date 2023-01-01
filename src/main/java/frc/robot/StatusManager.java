@@ -94,7 +94,7 @@ public class StatusManager implements Runnable {
 
             } else if (motor instanceof BaseMotorController) { // If the motor is a CTRE motor
                 BaseMotorController CTREMotor = (BaseMotorController) motor;
-                // TODO: This has not been tested on the tallons.
+                // TODO: This has not been tested on the talons.
                 if (CTREMotor.getFirmwareVersion() == 0) {
                     motorStatus.get(motor).setBoolean(false);
                 } else {

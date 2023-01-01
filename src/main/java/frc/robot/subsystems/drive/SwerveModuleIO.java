@@ -31,14 +31,9 @@ public interface SwerveModuleIO {
      */
     public default void setAngleSetpoint(double setpoint) {}
 
-    /**
-     * Configure the PID constants for the drive controller
-     */
+    /** Configure the PID constants for the drive controller */
     public default void configureDrivePID(double p, double i, double d) {}
 
-    /**
-     * Configure the PID constants for the angle controller
-     */
+    /** Configure the PID constants for the angle controller */
     public default void configureAnglePID(double p, double i, double d) {}
-
 }

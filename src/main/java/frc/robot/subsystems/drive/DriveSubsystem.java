@@ -19,29 +19,48 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.BlitzSubsystem;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
-    public SwerveDriveOdometry swerveOdometry;
-    public SwerveModule[] mSwerveMods;
+    private final SwerveDriveOdometry swerveOdometry;
+    private final SwerveModule[] swerveModules;
+    private final GyroIO gyroIO;
+    private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+
+    private final Logger logger;
     public AHRS gyro;
 
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("DriveSubsystem");
 
     private final Field2d field = new Field2d();
 
-    public DriveSubsystem() {
-        gyro = new AHRS();
-        zeroGyro();
+    public DriveSubsystem(
+            SwerveModuleIO frontLeft,
+            SwerveModuleIO frontRight,
+            SwerveModuleIO backLeft,
+            SwerveModuleIO backRight,
+            GyroIO gyroIO) {
+        this(
+                new SwerveModule(FL, frontLeft),
+                new SwerveModule(FR, frontRight),
+                new SwerveModule(BL, backLeft),
+                new SwerveModule(BR, backRight),
+                gyroIO);
+    }
 
+    public DriveSubsystem(
+            SwerveModule frontLeft,
+            SwerveModule frontRight,
+            SwerveModule backLeft,
+            SwerveModule backRight,
+            GyroIO gyroIO) {
         swerveOdometry = new SwerveDriveOdometry(KINEMATICS, getYaw(), getModulePositions());
-
-        mSwerveMods =
+        swerveModules =
                 new SwerveModule[] { // front left, front right, back left, back right.
-                    new SwerveModule(FL, new SwerveModuleIOSparkMax(Mod0.CONSTANTS)),
-                    new SwerveModule(FR, new SwerveModuleIOSparkMax(Mod1.CONSTANTS)),
-                    new SwerveModule(BL, new SwerveModuleIOSparkMax(Mod2.CONSTANTS)),
-                    new SwerveModule(BR, new SwerveModuleIOSparkMax(Mod3.CONSTANTS))
+                    frontLeft, frontRight, backLeft, backRight
                 };
+        this.gyroIO = gyroIO;
+        logger = Logger.getInstance();
         initTelemetry();
     }
 
@@ -56,7 +75,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
                                         translation.getX(), translation.getY(), rotation));
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
 
-        for (SwerveModule mod : mSwerveMods) {
+        for (SwerveModule mod : swerveModules) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
     }
@@ -66,7 +85,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_SPEED);
 
-        for (SwerveModule mod : mSwerveMods) {
+        for (SwerveModule mod : swerveModules) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
     }
@@ -75,7 +94,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     public SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for (SwerveModule mod : mSwerveMods) {
+        for (SwerveModule mod : swerveModules) {
             states[mod.moduleNumber] = mod.getState();
         }
         return states;
@@ -83,10 +102,10 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     public SwerveModulePosition[] getModulePositions() {
         return new SwerveModulePosition[] {
-            mSwerveMods[0].getPosition(),
-            mSwerveMods[1].getPosition(),
-            mSwerveMods[2].getPosition(),
-            mSwerveMods[3].getPosition()
+            swerveModules[0].getPosition(),
+            swerveModules[1].getPosition(),
+            swerveModules[2].getPosition(),
+            swerveModules[3].getPosition()
         };
     }
 
@@ -103,13 +122,17 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     }
 
     public Rotation2d getYaw() {
-        return (invertGyro)
-                ? Rotation2d.fromDegrees(360 - gyro.getYaw())
-                : Rotation2d.fromDegrees(gyro.getYaw());
+        return Rotation2d.fromDegrees(gyroInputs.yaw);
     }
 
     @Override
     public void periodic() {
+        for (SwerveModule mod : swerveModules) {
+            mod.periodic();
+        }
+        gyroIO.updateInputs(gyroInputs);
+        logger.processInputs("gyro", gyroInputs);
+
         swerveOdometry.update(getYaw(), getModulePositions());
     }
 
@@ -119,7 +142,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     }
 
     public void initTelemetry() {
-        for (SwerveModule mod : mSwerveMods) {
+        for (SwerveModule mod : swerveModules) {
             shuffleboardTab.addNumber(
                     "Mod " + mod.moduleNumber + " CanCoder",
                     () -> mod.getAbsoluteAngle().getDegrees());

@@ -51,7 +51,12 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
 
     @Override
     public void setDriveSetpoint(double setpoint, double ffVolts) {
-        drivePIDController.setReference(setpoint, CANSparkMax.ControlType.kVelocity, 0, ffVolts, SparkMaxPIDController.ArbFFUnits.kVoltage);
+        drivePIDController.setReference(
+                setpoint,
+                CANSparkMax.ControlType.kVelocity,
+                0,
+                ffVolts,
+                SparkMaxPIDController.ArbFFUnits.kVoltage);
     }
 
     @Override
