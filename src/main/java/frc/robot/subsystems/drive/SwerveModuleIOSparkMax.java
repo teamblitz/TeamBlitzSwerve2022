@@ -4,6 +4,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.lib.util.SwerveModuleConstants;
+import frc.robot.CTREConfigs;
 import frc.robot.Constants;
 import frc.robot.Robot;
 
@@ -80,7 +81,7 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
 
     private void configAngleEncoder() {
         absoluteEncoder.configFactoryDefault();
-        absoluteEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
+        absoluteEncoder.configAllSettings(CTREConfigs.getInstance().swerveCanCoderConfig);
     }
 
     private void resetToAbsolute() {

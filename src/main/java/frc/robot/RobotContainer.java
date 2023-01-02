@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import frc.robot.subsystems.drive.GyroIONavx;
+import frc.robot.subsystems.drive.SwerveModuleIOSparkMax;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -51,7 +53,13 @@ public class RobotContainer {
     }
 
     private void configureSubsystems() {
-        driveSubsystem = new DriveSubsystem();
+        driveSubsystem = new DriveSubsystem(
+                new SwerveModuleIOSparkMax(Constants.Swerve.Mod0.CONSTANTS),
+                new SwerveModuleIOSparkMax(Constants.Swerve.Mod1.CONSTANTS),
+                new SwerveModuleIOSparkMax(Constants.Swerve.Mod2.CONSTANTS),
+                new SwerveModuleIOSparkMax(Constants.Swerve.Mod3.CONSTANTS),
+                new GyroIONavx()
+        );
         driveController = new XboxController(0);
     }
 

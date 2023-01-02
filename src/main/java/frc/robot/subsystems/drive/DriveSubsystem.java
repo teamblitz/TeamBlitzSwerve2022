@@ -26,12 +26,8 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     private final SwerveModule[] swerveModules;
     private final GyroIO gyroIO;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
-
     private final Logger logger;
-    public AHRS gyro;
-
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("DriveSubsystem");
-
     private final Field2d field = new Field2d();
 
     public DriveSubsystem(
@@ -118,7 +114,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     }
 
     public void zeroGyro() {
-        gyro.reset();
+//        gyro.reset();
     }
 
     public Rotation2d getYaw() {

@@ -24,7 +24,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
-    public static CTREConfigs ctreConfigs; // This needs to be fixed.
     private Command autonomousCommand;
     private RobotContainer robotContainer;
 
@@ -79,6 +78,7 @@ public class Robot extends LoggedRobot {
 
             logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
             logger.addDataReceiver(new NT4Publisher());
+
         } else
             switch (Constants.simMode) {
                     // Running a physics simulator, log to local folder
@@ -99,7 +99,6 @@ public class Robot extends LoggedRobot {
         // Start AdvantageKit logger
         logger.start();
 
-        ctreConfigs = new CTREConfigs();
         robotContainer = new RobotContainer();
 
         System.out.println("Robot Start up at: " + Timer.getFPGATimestamp());

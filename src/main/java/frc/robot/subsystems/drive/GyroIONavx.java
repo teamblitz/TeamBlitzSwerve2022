@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import com.kauailabs.navx.frc.AHRS;
 
+@SuppressWarnings("unused")
 public class GyroIONavx implements GyroIO{
 
     /*

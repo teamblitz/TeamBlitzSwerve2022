@@ -49,7 +49,6 @@ public class SwerveModule {
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.MAX_SPEED;
-            // mDriveMotor_ctre.set(ControlMode.PercentOutput, percentOutput);
             io.setDrivePercent(percentOutput);
         } else {
             io.setDriveSetpoint(
