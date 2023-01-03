@@ -4,7 +4,6 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.Constants.Swerve.*;
 
-import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -14,7 +13,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,7 +30,34 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
     private final Logger logger;
     private final ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("DriveSubsystem");
+    private final ShuffleboardTab tuningTab = Shuffleboard.getTab("DriveTuning");
+    private final ShuffleboardLayout anglePidLayout =
+            tuningTab.getLayout("AnglePid", BuiltInLayouts.kList);
+    private final ShuffleboardLayout drivePidLayout =
+            tuningTab.getLayout("DrivePid", BuiltInLayouts.kList);
     private final Field2d field = new Field2d();
+
+    private final GenericEntry anglePEntry =
+            anglePidLayout.add("angleP", ANGLE_KP).getEntry("double");
+    private final GenericEntry angleIEntry =
+            anglePidLayout.add("angleI", ANGLE_KI).getEntry("double");
+    private final GenericEntry angleDEntry =
+            anglePidLayout.add("angleD", ANGLE_KD).getEntry("double");
+
+    private final GenericEntry drivePEntry =
+            drivePidLayout.add("angleP", DRIVE_KP).getEntry("double");
+    private final GenericEntry driveIEntry =
+            drivePidLayout.add("angleI", DRIVE_KI).getEntry("double");
+    private final GenericEntry driveDEntry =
+            drivePidLayout.add("angleD", DRIVE_KD).getEntry("double");
+
+    private double angleP = ANGLE_KP;
+    private double angleI = ANGLE_KI;
+    private double angleD = ANGLE_KD;
+
+    private double driveP = DRIVE_KP;
+    private double driveI = DRIVE_KI;
+    private double driveD = DRIVE_KD;
 
     public DriveSubsystem(
             SwerveModuleIO frontLeft,
@@ -50,11 +79,11 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
             SwerveModule backLeft,
             SwerveModule backRight,
             GyroIO gyroIO) {
-        swerveOdometry = new SwerveDriveOdometry(KINEMATICS, getYaw(), getModulePositions());
         swerveModules =
                 new SwerveModule[] { // front left, front right, back left, back right.
                     frontLeft, frontRight, backLeft, backRight
                 };
+        swerveOdometry = new SwerveDriveOdometry(KINEMATICS, getYaw(), getModulePositions());
         this.gyroIO = gyroIO;
         logger = Logger.getInstance();
         initTelemetry();
@@ -72,17 +101,17 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
 
         for (SwerveModule mod : swerveModules) {
-            mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
+            mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop, false);
         }
     }
 
     /* Used by SwerveControllerCommand in Auto */
     // Use in above method?
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
+    public void setModuleStates(SwerveModuleState[] desiredStates, boolean tuning) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_SPEED);
 
         for (SwerveModule mod : swerveModules) {
-            mod.setDesiredState(desiredStates[mod.moduleNumber], false);
+            mod.setDesiredState(desiredStates[mod.moduleNumber], false, tuning);
         }
     }
 
@@ -114,7 +143,8 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     }
 
     public void zeroGyro() {
-//        gyro.reset();
+        //        gyro.reset();
+        // TODO: I plan to have 2
     }
 
     public Rotation2d getYaw() {
@@ -130,6 +160,46 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
         logger.processInputs("gyro", gyroInputs);
 
         swerveOdometry.update(getYaw(), getModulePositions());
+
+        boolean anglePIDChanged = false;
+        boolean drivePIDChanged = false;
+
+        if (anglePEntry.getDouble(angleP) != angleP) {
+            anglePIDChanged = true;
+            angleP = anglePEntry.getDouble(angleP);
+        }
+        if (angleIEntry.getDouble(angleI) != angleI) {
+            anglePIDChanged = true;
+            angleI = angleIEntry.getDouble(angleI);
+        }
+        if (angleDEntry.getDouble(angleD) != angleD) {
+            anglePIDChanged = true;
+            angleD = angleDEntry.getDouble(angleD);
+        }
+
+        if (drivePEntry.getDouble(driveP) != driveP) {
+            drivePIDChanged = true;
+            driveP = drivePEntry.getDouble(driveP);
+        }
+        if (driveIEntry.getDouble(driveI) != driveI) {
+            drivePIDChanged = true;
+            driveI = driveIEntry.getDouble(driveI);
+        }
+        if (driveDEntry.getDouble(driveD) != driveD) {
+            drivePIDChanged = true;
+            driveD = driveDEntry.getDouble(driveD);
+        }
+
+        if (drivePIDChanged) {
+            for (SwerveModule module : swerveModules) {
+                module.configDrivePid(driveP, driveI, driveD);
+            }
+        }
+        if (anglePIDChanged) {
+            for (SwerveModule module : swerveModules) {
+                module.configAnglePid(angleP, angleI, angleD);
+            }
+        }
     }
 
     @Override
@@ -138,20 +208,6 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     }
 
     public void initTelemetry() {
-        for (SwerveModule mod : swerveModules) {
-            shuffleboardTab.addNumber(
-                    "Mod " + mod.moduleNumber + " CanCoder",
-                    () -> mod.getAbsoluteAngle().getDegrees());
-            shuffleboardTab.addNumber(
-                    "Mod " + mod.moduleNumber + " Integrated",
-                    () -> mod.getState().angle.getDegrees());
-            shuffleboardTab.addNumber(
-                    "Mod " + mod.moduleNumber + " Rotation",
-                    () -> mod.getState().angle.getDegrees());
-            shuffleboardTab.addNumber(
-                    "Mod " + mod.moduleNumber + " Velocity",
-                    () -> mod.getState().speedMetersPerSecond);
-        }
         shuffleboardTab.add(field);
     }
 

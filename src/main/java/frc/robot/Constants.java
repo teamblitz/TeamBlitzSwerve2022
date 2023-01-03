@@ -30,6 +30,8 @@ public final class Constants {
 
     public static final Mode simMode = Mode.SIM;
 
+    public static final boolean tuningMode = true;
+
     public static enum Mode {
         /** Running a physics simulator. */
         SIM,

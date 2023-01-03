@@ -76,7 +76,7 @@ public class Robot extends LoggedRobot {
                         logDir);
             }
 
-            logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+            logger.addDataReceiver(new WPILOGWriter(logDir));
             logger.addDataReceiver(new NT4Publisher());
 
         } else

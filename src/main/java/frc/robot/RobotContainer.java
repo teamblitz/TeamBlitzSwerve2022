@@ -53,13 +53,13 @@ public class RobotContainer {
     }
 
     private void configureSubsystems() {
-        driveSubsystem = new DriveSubsystem(
-                new SwerveModuleIOSparkMax(Constants.Swerve.Mod0.CONSTANTS),
-                new SwerveModuleIOSparkMax(Constants.Swerve.Mod1.CONSTANTS),
-                new SwerveModuleIOSparkMax(Constants.Swerve.Mod2.CONSTANTS),
-                new SwerveModuleIOSparkMax(Constants.Swerve.Mod3.CONSTANTS),
-                new GyroIONavx()
-        );
+        driveSubsystem =
+                new DriveSubsystem(
+                        new SwerveModuleIOSparkMax(Constants.Swerve.Mod0.CONSTANTS),
+                        new SwerveModuleIOSparkMax(Constants.Swerve.Mod1.CONSTANTS),
+                        new SwerveModuleIOSparkMax(Constants.Swerve.Mod2.CONSTANTS),
+                        new SwerveModuleIOSparkMax(Constants.Swerve.Mod3.CONSTANTS),
+                        new GyroIONavx());
         driveController = new XboxController(0);
     }
 

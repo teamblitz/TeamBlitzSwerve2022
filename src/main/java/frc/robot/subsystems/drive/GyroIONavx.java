@@ -3,7 +3,7 @@ package frc.robot.subsystems.drive;
 import com.kauailabs.navx.frc.AHRS;
 
 @SuppressWarnings("unused")
-public class GyroIONavx implements GyroIO{
+public class GyroIONavx implements GyroIO {
 
     /*
      * Axis       Orientation       Linear motion           Rotational Motion
@@ -21,10 +21,13 @@ public class GyroIONavx implements GyroIO{
 
     @Override
     public void updateInputs(GyroIOInputs inputs) {
-        // The navx yaw pitch roll values need to be inverted to make them use the same coordinate system as us.
+        // The navx yaw pitch roll values need to be inverted to make them use the same coordinate
+        // system as us.
         // WPILIB's coordinate system is X forward Y to the left and Z up
         // Navx is y forward x to the right, and z up.
-        inputs.yaw = -gyro.getAngle(); // Maybe this should be get yaw once we confirm the behavior of the pigeon
+        inputs.yaw =
+                -gyro.getAngle(); // Maybe this should be get yaw once we confirm the behavior of
+        // the pigeon
         inputs.pitch = -gyro.getPitch();
         inputs.roll = -gyro.getRoll();
         inputs.yawRate = -gyro.getRate();

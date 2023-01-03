@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.*;
 import frc.lib.util.ModuleStateOptimizer;
 import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
@@ -31,7 +32,15 @@ public class SwerveModule {
 
         lastAngle = getAngle();
 
-        logKey = "Swerve Mod " + moduleNumber;
+        logKey = "Swerve/Mod" + moduleNumber;
+    }
+
+    public void configAnglePid(double p, double i, double d) {
+        io.configureAnglePID(p, i, d);
+    }
+
+    public void configDrivePid(double p, double i, double d) {
+        io.configureDrivePID(p, i, d);
     }
 
     public void periodic() {
@@ -39,10 +48,11 @@ public class SwerveModule {
         logger.processInputs(logKey, inputs);
     }
 
-    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+    public void setDesiredState(
+            SwerveModuleState desiredState, boolean isOpenLoop, boolean tuning) {
         desiredState = ModuleStateOptimizer.optimize(desiredState, getState().angle);
 
-        setAngle(desiredState);
+        setAngle(desiredState, tuning);
         setSpeed(desiredState, isOpenLoop);
     }
 
@@ -57,9 +67,11 @@ public class SwerveModule {
         }
     }
 
-    private void setAngle(SwerveModuleState desiredState) {
+    private void setAngle(SwerveModuleState desiredState, boolean tuning) {
         Rotation2d angle =
-                (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.MAX_SPEED * 0.01))
+                (!tuning
+                                && Math.abs(desiredState.speedMetersPerSecond)
+                                        <= (Constants.Swerve.MAX_SPEED * 0.01))
                         ? lastAngle
                         : desiredState.angle; // Prevent rotating module if speed is less than 1%.
         io.setAngleSetpoint(angle.getDegrees());

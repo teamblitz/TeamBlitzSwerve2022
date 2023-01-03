@@ -14,6 +14,7 @@ public final class CTREConfigs {
         }
         return instance;
     }
+
     public final CANCoderConfiguration swerveCanCoderConfig;
 
     private CTREConfigs() {
