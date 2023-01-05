@@ -50,7 +50,9 @@ public class SwerveModule {
 
     public void setDesiredState(
             SwerveModuleState desiredState, boolean isOpenLoop, boolean tuning) {
+        
         desiredState = ModuleStateOptimizer.optimize(desiredState, getState().angle);
+        
 
         setAngle(desiredState, tuning);
         setSpeed(desiredState, isOpenLoop);
@@ -61,6 +63,7 @@ public class SwerveModule {
             double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.MAX_SPEED;
             io.setDrivePercent(percentOutput);
         } else {
+            logger.recordOutput(logKey + "/SpeedSetpoint", desiredState.speedMetersPerSecond);
             io.setDriveSetpoint(
                     desiredState.speedMetersPerSecond,
                     feedforward.calculate(desiredState.speedMetersPerSecond));
@@ -75,6 +78,7 @@ public class SwerveModule {
                         ? lastAngle
                         : desiredState.angle; // Prevent rotating module if speed is less than 1%.
         io.setAngleSetpoint(angle.getDegrees());
+        logger.recordOutput(logKey + "/AngleSetpoint", angle.getDegrees() % 360);
         lastAngle = angle;
     }
 

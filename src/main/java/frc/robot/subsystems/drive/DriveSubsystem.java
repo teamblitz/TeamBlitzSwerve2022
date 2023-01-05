@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.BlitzSubsystem;
+import frc.robot.commands.SwerveTuning;
+
 import org.littletonrobotics.junction.Logger;
 
 public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
@@ -107,7 +109,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     /* Used by SwerveControllerCommand in Auto */
     // Use in above method?
-    public void setModuleStates(SwerveModuleState[] desiredStates, boolean tuning) {
+    public void setModuleStates(SwerveModuleState[] desiredStates, boolean openLoop, boolean tuning) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_SPEED);
 
         for (SwerveModule mod : swerveModules) {
@@ -209,6 +211,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     public void initTelemetry() {
         shuffleboardTab.add(field);
+        // tuningTab.add("Tuning Command", new SwerveTuning(this));
     }
 
     public void drawRobotOnField(Field2d field) {

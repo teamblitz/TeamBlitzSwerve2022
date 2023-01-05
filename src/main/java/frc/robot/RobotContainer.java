@@ -10,7 +10,12 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.SwerveTuning;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.GyroIONavx;
@@ -34,11 +39,20 @@ public class RobotContainer {
     public RobotContainer() {
         configureSubsystems();
 
-        CameraServer.startAutomaticCapture(); // Ignore warning.
+        // CameraServer.startAutomaticCapture(); // Ignore warning.
 
         configureButtonBindings();
 
         setDefaultCommands();
+
+        ShuffleboardTab tuningTab = Shuffleboard.getTab("DriveTuning");
+
+        SwerveTuning tuningCommand = new SwerveTuning(driveSubsystem);
+
+        tuningTab.add("Tuning Command", tuningCommand);
+
+        new Trigger(driveController::getAButton).onTrue(new InstantCommand(() -> tuningCommand.nextAngle()));
+
     }
 
     private void setDefaultCommands() {
@@ -46,10 +60,10 @@ public class RobotContainer {
         driveSubsystem.setDefaultCommand(
                 new TeleopSwerve(
                         driveSubsystem,
-                        () -> driveController.getLeftY(),
-                        () -> driveController.getLeftX(),
-                        () -> driveController.getRightX(),
-                        () -> true));
+                        () -> driveController.getLeftY() * .2,
+                        () -> driveController.getLeftX() * .2,
+                        () -> driveController.getRightX() *.2,
+                        () -> false));
     }
 
     private void configureSubsystems() {
