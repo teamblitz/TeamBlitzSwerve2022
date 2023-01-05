@@ -45,11 +45,11 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
             anglePidLayout.add("angleD", ANGLE_KD).getEntry("double");
 
     private final GenericEntry drivePEntry =
-            drivePidLayout.add("angleP", DRIVE_KP).getEntry("double");
+            drivePidLayout.add("driveP", DRIVE_KP).getEntry("double");
     private final GenericEntry driveIEntry =
-            drivePidLayout.add("angleI", DRIVE_KI).getEntry("double");
+            drivePidLayout.add("driveI", DRIVE_KI).getEntry("double");
     private final GenericEntry driveDEntry =
-            drivePidLayout.add("angleD", DRIVE_KD).getEntry("double");
+            drivePidLayout.add("driveD", DRIVE_KD).getEntry("double");
 
     private double angleP = ANGLE_KP;
     private double angleI = ANGLE_KI;

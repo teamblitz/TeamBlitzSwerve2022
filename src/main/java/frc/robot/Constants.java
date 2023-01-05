@@ -49,9 +49,9 @@ public final class Constants {
 
         /* Drivetrain Constants */
         public static final double TRACK_WIDTH =
-                Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
+                Units.inchesToMeters(24.75); // TODO: This must be tuned to specific robot
         public static final double WHEEL_BASE =
-                Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
+                Units.inchesToMeters(24.75); // TODO: This must be tuned to specific robot
         public static final double WHEEL_CIRCUMFERENCE = chosenModule.wheelCircumference;
 
         /* Motor Inverts */
@@ -137,7 +137,7 @@ public final class Constants {
 
         /* Neutral Modes */
         public static final IdleMode ANGLE_NEUTRAL_MODE = IdleMode.kCoast;
-        public static final IdleMode DRIVE_NEUTRAL_MODE = IdleMode.kBrake;
+        public static final IdleMode DRIVE_NEUTRAL_MODE = IdleMode.kCoast;
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */

@@ -45,6 +45,14 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
     }
 
     @Override
+    public void updateInputs(SwerveModuleIO.SwerveModuleInputs inputs) {
+        inputs.anglePositionDegrees = angleEncoder.getPosition();
+        inputs.drivePositionMeters = driveEncoder.getPosition();
+        inputs.speedMetersPerSecond = driveEncoder.getVelocity();
+        inputs.absoluteEncoderPositionDegrees = absoluteEncoder.getAbsolutePosition();
+    }
+
+    @Override
     public void setDrivePercent(double percent) {
         driveMotor.set(percent);
     }
@@ -58,6 +66,8 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
                 ffVolts,
                 SparkMaxPIDController.ArbFFUnits.kVoltage);
     }
+
+    
 
     @Override
     public void setAngleSetpoint(double setpoint) {
