@@ -50,9 +50,8 @@ public class SwerveModule {
 
     public void setDesiredState(
             SwerveModuleState desiredState, boolean isOpenLoop, boolean tuning) {
-        
+
         desiredState = ModuleStateOptimizer.optimize(desiredState, getState().angle);
-        
 
         setAngle(desiredState, tuning);
         setSpeed(desiredState, isOpenLoop);
@@ -78,7 +77,7 @@ public class SwerveModule {
                         ? lastAngle
                         : desiredState.angle; // Prevent rotating module if speed is less than 1%.
         io.setAngleSetpoint(angle.getDegrees());
-        logger.recordOutput(logKey + "/AngleSetpoint", angle.getDegrees() % 360);
+        logger.recordOutput(logKey + "/AngleSetpoint", angle.getDegrees());
         lastAngle = angle;
     }
 

@@ -3,8 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -35,15 +33,15 @@ public class SwerveTuning extends CommandBase {
     @Override
     public void execute() {
         // if (DriverStation.isTest()) {
-            driveSubsystem.setModuleStates(
-                    new SwerveModuleState[] {
-                        new SwerveModuleState(speed, Rotation2d.fromDegrees(angle)),
-                        new SwerveModuleState(speed, Rotation2d.fromDegrees(angle)),
-                        new SwerveModuleState(speed, Rotation2d.fromDegrees(angle)),
-                        new SwerveModuleState(speed, Rotation2d.fromDegrees(angle))
-                    },
-                    true,
-                    true);
+        driveSubsystem.setModuleStates(
+                new SwerveModuleState[] {
+                    new SwerveModuleState(speed, Rotation2d.fromDegrees(angle)),
+                    new SwerveModuleState(speed, Rotation2d.fromDegrees(angle)),
+                    new SwerveModuleState(speed, Rotation2d.fromDegrees(angle)),
+                    new SwerveModuleState(speed, Rotation2d.fromDegrees(angle))
+                },
+                true,
+                true);
         // }
     }
 
@@ -62,5 +60,6 @@ public class SwerveTuning extends CommandBase {
     public void nextAngle() {
         angle += 90;
         angle %= 360;
+        System.out.println("NextAngle");
     }
 }

@@ -107,7 +107,7 @@ public final class Constants {
         public static final double CLOSED_LOOP_RAMP = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double ANGLE_KP = 0.0; // TODO: Tune this.
+        public static final double ANGLE_KP = 0.005; // TODO: Tune this.
         public static final double ANGLE_KI = 0.0;
         public static final double ANGLE_KD = 0.0;
         public static final double ANGLE_KF = 0.0; // For now, should remain zero
@@ -221,5 +221,5 @@ public final class Constants {
     }
 
     // TODO: Calculate needed deadband for controller (should be like 6% or less)
-    public static double STICK_DEADBAND = 0.1;
+    public static double STICK_DEADBAND = 0.04;
 }

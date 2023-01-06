@@ -67,8 +67,6 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
                 SparkMaxPIDController.ArbFFUnits.kVoltage);
     }
 
-    
-
     @Override
     public void setAngleSetpoint(double setpoint) {
         anglePIDController.setReference(setpoint, CANSparkMax.ControlType.kPosition);

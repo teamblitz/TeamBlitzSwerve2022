@@ -7,14 +7,16 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.oi.SaitekX52Joystick;
+import frc.robot.Constants.OIConstants.SaitekMappings;
 import frc.robot.commands.SwerveTuning;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -35,6 +37,9 @@ public class RobotContainer {
 
     /* ***** --- Controllers --- ***** */
     private XboxController driveController;
+    private SaitekX52Joystick otherDriveController;
+
+    private SwerveTuning tuningCommand; 
 
     public RobotContainer() {
         configureSubsystems();
@@ -43,27 +48,37 @@ public class RobotContainer {
 
         configureButtonBindings();
 
-        setDefaultCommands();
-
+        
         ShuffleboardTab tuningTab = Shuffleboard.getTab("DriveTuning");
+        
+        this.tuningCommand = new SwerveTuning(driveSubsystem);
+        
+        setDefaultCommands();
+        // tuningTab.add("Tuning Command", tuningCommand);
 
-        SwerveTuning tuningCommand = new SwerveTuning(driveSubsystem);
+        // tuningCommand.schedule();
 
-        tuningTab.add("Tuning Command", tuningCommand);
-
-        new Trigger(driveController::getAButton).onTrue(new InstantCommand(() -> tuningCommand.nextAngle()));
-
+        new Trigger(driveController::getAButton)
+                .onTrue(new InstantCommand(() -> tuningCommand.nextAngle()));
     }
 
     private void setDefaultCommands() {
         // Set default command for drive
+        // driveSubsystem.setDefaultCommand(
+        //         new TeleopSwerve(
+        //                 driveSubsystem,
+        //                 () -> -driveController.getLeftY() * .2,
+        //                 () -> -driveController.getLeftX() * .2,
+        //                 () -> -driveController.getRightX() * .2,
+        //                 () -> false));
         driveSubsystem.setDefaultCommand(
                 new TeleopSwerve(
                         driveSubsystem,
-                        () -> driveController.getLeftY() * .2,
-                        () -> driveController.getLeftX() * .2,
-                        () -> driveController.getRightX() *.2,
+                        () -> -otherDriveController.getRawAxis(SaitekX52Joystick.Axis.kYAxis.value) * .5,
+                        () -> -otherDriveController.getRawAxis(SaitekX52Joystick.Axis.kXAxis.value) * .5,
+                        () -> -otherDriveController.getRawAxis(SaitekX52Joystick.Axis.kZRot.value) * .2,
                         () -> false));
+        // driveSubsystem.setDefaultCommand(tuningCommand);
     }
 
     private void configureSubsystems() {
@@ -75,6 +90,7 @@ public class RobotContainer {
                         new SwerveModuleIOSparkMax(Constants.Swerve.Mod3.CONSTANTS),
                         new GyroIONavx());
         driveController = new XboxController(0);
+        otherDriveController = new SaitekX52Joystick(1);
     }
 
     /**
@@ -83,7 +99,9 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
-    private void configureButtonBindings() {}
+    private void configureButtonBindings() {
+        new Trigger(driveController::getYButton).onTrue(Commands.runOnce(driveSubsystem::zeroGyro));
+    }
 
     public Command getAutonomousCommand() { // Autonomous code goes here
         return null;
