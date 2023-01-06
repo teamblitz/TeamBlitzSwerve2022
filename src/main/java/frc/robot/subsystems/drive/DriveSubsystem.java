@@ -162,6 +162,8 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
         swerveOdometry.update(getYaw(), getModulePositions());
 
+        logger.recordOutput("Swerve/Odometry", swerveOdometry.getPoseMeters());
+
         boolean anglePIDChanged = false;
         boolean drivePIDChanged = false;
 
