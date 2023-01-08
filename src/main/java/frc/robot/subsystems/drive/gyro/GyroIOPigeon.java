@@ -1,7 +1,8 @@
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.drive.gyro;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import frc.robot.Constants;
+import frc.robot.subsystems.drive.gyro.GyroIO;
 
 public class GyroIOPigeon implements GyroIO {
 
