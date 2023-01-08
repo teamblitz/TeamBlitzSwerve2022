@@ -49,9 +49,9 @@ public final class Constants {
 
         /* Drivetrain Constants */
         public static final double TRACK_WIDTH =
-                Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
+                Units.inchesToMeters(24.75); // TODO: This must be tuned to specific robot
         public static final double WHEEL_BASE =
-                Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
+                Units.inchesToMeters(24.75); // TODO: This must be tuned to specific robot
         public static final double WHEEL_CIRCUMFERENCE = chosenModule.wheelCircumference;
 
         /* Motor Inverts */
@@ -107,7 +107,7 @@ public final class Constants {
         public static final double CLOSED_LOOP_RAMP = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double ANGLE_KP = 0.0; // TODO: Tune this.
+        public static final double ANGLE_KP = 0.005; // TODO: Tune this.
         public static final double ANGLE_KI = 0.0;
         public static final double ANGLE_KD = 0.0;
         public static final double ANGLE_KF = 0.0; // For now, should remain zero
@@ -137,7 +137,7 @@ public final class Constants {
 
         /* Neutral Modes */
         public static final IdleMode ANGLE_NEUTRAL_MODE = IdleMode.kCoast;
-        public static final IdleMode DRIVE_NEUTRAL_MODE = IdleMode.kBrake;
+        public static final IdleMode DRIVE_NEUTRAL_MODE = IdleMode.kCoast;
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
@@ -145,7 +145,7 @@ public final class Constants {
             public static final int DRIVE_MOTOR_ID = 5;
             public static final int ANGLE_MOTOR_ID = 6;
             public static final int CAN_CODER_ID = 2;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(0.0);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(19.68);
             public static final SwerveModuleConstants CONSTANTS =
                     new SwerveModuleConstants(
                             DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
@@ -156,7 +156,7 @@ public final class Constants {
             public static final int DRIVE_MOTOR_ID = 7;
             public static final int ANGLE_MOTOR_ID = 8;
             public static final int CAN_CODER_ID = 3;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(0.0);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(258.13);
             public static final SwerveModuleConstants CONSTANTS =
                     new SwerveModuleConstants(
                             DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
@@ -167,7 +167,7 @@ public final class Constants {
             public static final int DRIVE_MOTOR_ID = 9;
             public static final int ANGLE_MOTOR_ID = 10;
             public static final int CAN_CODER_ID = 4;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(0.0);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(235.28);
             public static final SwerveModuleConstants CONSTANTS =
                     new SwerveModuleConstants(
                             DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
@@ -178,7 +178,7 @@ public final class Constants {
             public static final int DRIVE_MOTOR_ID = 11;
             public static final int ANGLE_MOTOR_ID = 12;
             public static final int CAN_CODER_ID = 13;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(0.0);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(18.54);
             public static final SwerveModuleConstants CONSTANTS =
                     new SwerveModuleConstants(
                             DRIVE_MOTOR_ID, ANGLE_MOTOR_ID, CAN_CODER_ID, ANGLE_OFFSET);
@@ -221,5 +221,5 @@ public final class Constants {
     }
 
     // TODO: Calculate needed deadband for controller (should be like 6% or less)
-    public static double STICK_DEADBAND = 0.1;
+    public static double STICK_DEADBAND = 0.04;
 }

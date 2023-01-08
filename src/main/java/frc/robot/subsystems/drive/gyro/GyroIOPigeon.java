@@ -41,4 +41,9 @@ public class GyroIOPigeon implements GyroIO {
         // TODO: I would assume that 0 or below is what is returned if the device is not connected
         // but this needs to be tested.
     }
+
+    @Override
+    public void zeroGyro() {
+        gyro.setYaw(0);
+    }
 }

@@ -45,6 +45,14 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
     }
 
     @Override
+    public void updateInputs(SwerveModuleIO.SwerveModuleInputs inputs) {
+        inputs.anglePositionDegrees = angleEncoder.getPosition();
+        inputs.drivePositionMeters = driveEncoder.getPosition();
+        inputs.speedMetersPerSecond = driveEncoder.getVelocity();
+        inputs.absoluteEncoderPositionDegrees = absoluteEncoder.getAbsolutePosition();
+    }
+
+    @Override
     public void setDrivePercent(double percent) {
         driveMotor.set(percent);
     }
@@ -107,7 +115,7 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
         anglePIDController.setFF(Constants.Swerve.ANGLE_KF);
 
         // TODO: Adjust this latter after we know the pid loop is not crazy
-        angleMotor.getPIDController().setOutputRange(-.25, .25);
+        // angleMotor.getPIDController().setOutputRange(-.25, .25);
     }
 
     private void configDriveMotor() {
@@ -142,6 +150,6 @@ public class SwerveModuleIOSparkMax implements SwerveModuleIO {
         // set our speed.
 
         // TODO: Remove after we know the pid loop isn't wild
-        drivePIDController.setOutputRange(-.5, .5);
+        // drivePIDController.setOutputRange(-.5, .5);
     }
 }

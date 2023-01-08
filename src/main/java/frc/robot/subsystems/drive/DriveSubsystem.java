@@ -49,11 +49,11 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
             anglePidLayout.add("angleD", ANGLE_KD).getEntry("double");
 
     private final GenericEntry drivePEntry =
-            drivePidLayout.add("angleP", DRIVE_KP).getEntry("double");
+            drivePidLayout.add("driveP", DRIVE_KP).getEntry("double");
     private final GenericEntry driveIEntry =
-            drivePidLayout.add("angleI", DRIVE_KI).getEntry("double");
+            drivePidLayout.add("driveI", DRIVE_KI).getEntry("double");
     private final GenericEntry driveDEntry =
-            drivePidLayout.add("angleD", DRIVE_KD).getEntry("double");
+            drivePidLayout.add("driveD", DRIVE_KD).getEntry("double");
 
     private double angleP = ANGLE_KP;
     private double angleI = ANGLE_KI;
@@ -111,7 +111,8 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     /* Used by SwerveControllerCommand in Auto */
     // Use in above method?
-    public void setModuleStates(SwerveModuleState[] desiredStates, boolean tuning) {
+    public void setModuleStates(
+            SwerveModuleState[] desiredStates, boolean openLoop, boolean tuning) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_SPEED);
 
         for (SwerveModule mod : swerveModules) {
@@ -147,7 +148,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
     }
 
     public void zeroGyro() {
-        //        gyro.reset();
+            gyroIO.zeroGyro();
         // TODO: I plan to have 2
     }
 
@@ -164,6 +165,8 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
         logger.processInputs("gyro", gyroInputs);
 
         swerveOdometry.update(getYaw(), getModulePositions());
+
+        logger.recordOutput("Swerve/Odometry", swerveOdometry.getPoseMeters());
 
         boolean anglePIDChanged = false;
         boolean drivePIDChanged = false;
@@ -213,7 +216,7 @@ public class DriveSubsystem extends SubsystemBase implements BlitzSubsystem {
 
     public void initTelemetry() {
         shuffleboardTab.add(field);
-        tuningTab.add("tuningCommand", new SwerveTuning(this));
+        // tuningTab.add("Tuning Command", new SwerveTuning(this));
     }
 
     public void drawRobotOnField(Field2d field) {
