@@ -1,2 +1,2 @@
-# TeamBlitzRobot2022
+# TeamBlitzSwerve2022
 Robot code for Team Blitz's offseason swerve.
